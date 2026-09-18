@@ -2,6 +2,7 @@
 Sephiria의 플레이를 보조하는 HorayModAPI 종합 편의성 모드입니다.
 
 [다운로드](https://github.com/psyche-kr/Sephiria-Expanded-MOD/releases)
+
 [업데이트 로드맵](https://github.com/psyche-kr/Sephiria-Expanded-MOD/blob/main/ROADMAP.md)
 
 ## 설치 방법
