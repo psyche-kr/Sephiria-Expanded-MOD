@@ -8,10 +8,12 @@ Sephiria의 플레이를 보조하는 HorayModAPI 종합 편의성 모드입니�
 2. 게임 설치 경로의 `Sephiria/AddOns` 폴더 안에 넣습니다. AddOns 폴더가 없다면 직접 생성합니다.
 
 ## 제작 툴 
-- Visual Studio
-- dnSpy
+- Visual Studio 2022
+- dnSpy v6.1.8
 - Unity Explorer BIE5 Mono
+- Asset Studio Net8.0
 - Codex
+- Aseprite
 
 ## 건의 및 오류 제보
 - Issues
