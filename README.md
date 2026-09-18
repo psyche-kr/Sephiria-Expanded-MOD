@@ -15,4 +15,3 @@ Sephiria의 플레이를 보조하는 HorayModAPI 종합 편의성 모드입니�
 
 ## 건의 및 오류 제보
 - Issues
-- Discord vmtlzp
