@@ -1,5 +1,5 @@
 # ⚙️ Sephiria Expanded MOD
-Sephiria의 플레이를 보조하는 HorayModAPI 종합 편의성 모드입니다.
+Sephiria의 플레이를 보조하는 HorayModAPI MOD입니다.
 
 [다운로드](https://github.com/psyche-kr/Sephiria-Expanded-MOD/releases) | [업데이트 로드맵](https://github.com/psyche-kr/Sephiria-Expanded-MOD/blob/main/ROADMAP.md) | [건의 및 오류 제보](https://github.com/psyche-kr/Sephiria-Expanded-MOD/issues)
 
@@ -32,6 +32,7 @@ Sephiria의 플레이를 보조하는 HorayModAPI 종합 편의성 모드입니�
 - 특수공격, 마법서, 발동형 자동 사용: 키를 누르고 있어도 계속 유지됩니다.
 - 모드 아이템 툴팁 추가: 아이템 설명 UI에 해당 아이템이 어느 모드에서 추가된 것인지 표시합니다.
 - FPS 표시: 화면 좌측 상단에 현재 프레임레이트를 표시합니다.
+- 미터기 활성화, "개인과 파티의 피해량을 측정해 미터기 창에 표시합니다.\n(알트를 누른 채 클릭하면 창을 이동할 수 있습니다.)
 
 **성장 / 아이템**
 - 레벨당 인벤토리 지급: 설정한 만큼 레벨이 상승할 때마다 인벤토리 슬롯을 지급합니다.
