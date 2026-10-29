@@ -1,0 +1,194 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{254938AC-A6CA-4868-838E-9243EAC2D826}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SephiriaExpanded</RootNamespace>
+    <AssemblyName>SephiriaExpanded</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony, Version=2.4.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Lib.Harmony.2.4.2\lib\net472\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>D:\Steam\steamapps\common\Sephiria\Sephiria_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Mirror">
+      <HintPath>D:\Steam\steamapps\common\Sephiria\Sephiria_Data\Managed\Mirror.dll</HintPath>
+    </Reference>
+    <Reference Include="FMODUnity">
+      <HintPath>D:\Steam\steamapps\common\Sephiria\Sephiria_Data\Managed\FMODUnity.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>D:\Steam\steamapps\common\Sephiria\Sephiria_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>D:\Steam\steamapps\common\Sephiria\Sephiria_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>D:\Steam\steamapps\common\Sephiria\Sephiria_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.InputSystem">
+      <HintPath>D:\Steam\steamapps\common\Sephiria\Sephiria_Data\Managed\Unity.InputSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>D:\Steam\steamapps\common\Sephiria\Sephiria_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Physics2DModule">
+      <HintPath>D:\Steam\steamapps\common\Sephiria\Sephiria_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>D:\Steam\steamapps\common\Sephiria\Sephiria_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="UnityEngine.UnityWebRequestModule">
+      <HintPath>D:\Steam\steamapps\common\Sephiria\Sephiria_Data\Managed\UnityEngine.UnityWebRequestModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>D:\Steam\steamapps\common\Sephiria\Sephiria_Data\Managed\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>D:\Steam\steamapps\common\Sephiria\Sephiria_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ExpandedOptionRows.cs" />
+    <Compile Include="OptionTooltips.cs" />
+    <Compile Include="ExpandedSettingsPanel.cs" />
+    <Compile Include="Features\ChatConvenience.cs" />
+    <Compile Include="Features\ShopFavorite.cs" />
+    <Compile Include="Features\EnchantMark.cs" />
+    <Compile Include="Features\JournalWeaponOutline.cs" />
+    <Compile Include="Features\MorePreset.cs" />
+    <Compile Include="Features\CostumeReward.cs" />
+    <Compile Include="Features\CutsceneSkip.cs" />
+    <Compile Include="Features\EnchantTable.cs" />
+    <Compile Include="Features\FirstAnvil.cs" />
+    <Compile Include="Features\FirstArtifactLegendary.cs" />
+    <Compile Include="Features\BossHpText.cs" />
+    <Compile Include="Features\BossAggro.cs" />
+    <Compile Include="Features\BossChallenge.cs" />
+    <Compile Include="Features\BossDialogue.cs" />
+    <Compile Include="Features\BossChallengeBadge.cs" />
+    <Compile Include="Features\BossChallengeNet.cs" />
+    <Compile Include="Features\BossChallenge_MoleChieftain.cs" />
+    <Compile Include="Features\BossChallenge_MoleBigBomb.cs" />
+    <Compile Include="Features\BossChallenge_RootDemon.cs" />
+    <Compile Include="Features\BossChallenge_OinkKing.cs" />
+    <Compile Include="Features\BossChallenge_PantherRogueKing.cs" />
+    <Compile Include="Features\BossChallenge_MadArmadillo.cs" />
+    <Compile Include="Features\BossChallenge_LibraryGuard.cs" />
+    <Compile Include="Features\BossChallenge_Askard.cs" />
+    <Compile Include="Features\BossChallenge_BirdDemon.cs" />
+    <Compile Include="Features\BossChallenge_LizardDemon.cs" />
+    <Compile Include="Features\BossChallenge_QBoss.cs" />
+    <Compile Include="Features\WalletShare.cs" />
+    <Compile Include="Features\WeaponShine.cs" />
+    <Compile Include="Features\CursorOutline.cs" />
+    <Compile Include="Features\HardRecordCommand.cs" />
+    <Compile Include="Features\AutoUpdate.cs" />
+    <Compile Include="Features\BossInfo.cs" />
+    <Compile Include="Features\BossBreak.cs" />
+    <Compile Include="Features\DevPanel.cs" />
+    <Compile Include="Features\BossChallengeNotice.cs" />
+    <Compile Include="Features\FriendlyFire.cs" />
+    <Compile Include="Features\KillFeed.cs" />
+    <Compile Include="Features\MoreMultiplayerInfo.cs" />
+    <Compile Include="Features\GuestReturnToTown.cs" />
+    <Compile Include="Features\PingSound.cs" />
+    <Compile Include="Features\PingIgnore.cs" />    <Compile Include="Features\ModKeyBinding.cs" />
+    <Compile Include="Features\NameColor.cs" />
+    <Compile Include="Features\DamageMeter.cs" />
+    <Compile Include="Features\IconColor.cs" />
+    <Compile Include="Features\DamageMeterCollector.cs" />
+    <Compile Include="Features\DamageMeterModel.cs" />
+    <Compile Include="Features\DamageMeterPanel.cs" />
+    <Compile Include="Features\BloodFestival.cs" />
+    <Compile Include="Features\AnytimeOpenInventory.cs" />
+    <Compile Include="Features\MoreMultiplayer.cs" />
+    <Compile Include="Features\MoreMap.cs" />
+    <Compile Include="Features\MoreMapCompatibility.cs" />
+    <Compile Include="Features\DropPrefabOptimize.cs" />
+    <Compile Include="Features\MinimapOpen.cs" />
+    <Compile Include="Features\MysteryPot.cs" />
+    <Compile Include="Features\InventorySell.cs" />
+    <Compile Include="Features\MoreInventory.cs" />
+    <Compile Include="Features\MorePlayerLevel.cs" />
+    <Compile Include="Features\PotionShare.cs" />
+    <Compile Include="Features\Difficulty.cs" />
+    <Compile Include="Features\FPSMeter.cs" />
+    <Compile Include="Features\HiddenRoomFinder.cs" />
+    <Compile Include="Features\HudTextFactory.cs" />
+    <Compile Include="Features\FountainArtifactUnlock.cs" />
+    <Compile Include="Features\FountainTabletUnlock.cs" />
+    <Compile Include="Features\FountainArtifactShare.cs" />
+    <Compile Include="Features\FountainCapacity.cs" />
+    <Compile Include="Features\SellStartItem.cs" />
+    <Compile Include="Features\LevelUpItemCount.cs" />
+    <Compile Include="LocalPlayer.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="ModSettings.cs" />
+    <Compile Include="ModInfo.cs" />
+    <Compile Include="Features\MonsterScaler.cs" />
+    <Compile Include="Features\RightClickHold.cs" />
+    <Compile Include="Features\DeveloperMode.cs" />
+    <Compile Include="Features\AlwaysRun.cs" />
+    <Compile Include="Features\DeveloperKill.cs" />
+    <Compile Include="Features\DeveloperFloor.cs" />
+    <Compile Include="Features\MoreDice.cs" />
+    <Compile Include="Features\MoreDummyHp.cs" />
+    <Compile Include="Features\MoreHpSteal.cs" />
+    <Compile Include="Features\MoreSapphire.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Features\RandomEvent.cs" />
+    <Compile Include="Features\TradeMoneyShare.cs" />
+    <Compile Include="Features\WhichIsThisModFrom.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="..\Build\SyncMetadata.ps1" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>

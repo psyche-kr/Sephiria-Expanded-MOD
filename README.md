@@ -7,6 +7,18 @@ Sephiria의 플레이를 보조하는 HorayModAPI MOD입니다.
 1. ZIP 파일 안의 `SephiriaExpanded` 를 압축 해제합니다.
 2. 게임 설치 경로의 `Sephiria/AddOns` 폴더 안에 넣습니다. AddOns 폴더가 없다면 직접 생성합니다.
 
+## 🧩 소스 코드
+모드 소스는 [`src/`](src) 에 있습니다. 게임이 제공하는 내부 API(`HorayModBase`)를 상속한 진입점에서 [Harmony](https://github.com/pardeike/Harmony)로 게임 메서드를 패치하는 방식으로 동작합니다.
+
+| 위치 | 역할 |
+| --- | --- |
+| `src/SephiriaExpanded/Main.cs` | 모드 진입점. 설정 로드, Harmony 패치 적용, 런타임 오브젝트 생성과 해제 |
+| `src/SephiriaExpanded/ModSettings.cs` | 옵션 값 저장과 불러오기 |
+| `src/SephiriaExpanded/ExpandedSettingsPanel.cs` | 게임 설정 화면에 붙는 모드 옵션 UI |
+| `src/SephiriaExpanded/Features/` | 기능별 파일 (피해량 미터기, 보스 챌린지, 숨겨진 방 추적, 지갑 공유 등) |
+
+**빌드**: Visual Studio 2022에서 `src/SephiriaExpanded.sln`을 엽니다. 게임 DLL(`Assembly-CSharp`, `Mirror`, `UnityEngine.*` 등)은 저장소에 포함하지 않았으므로, `SephiriaExpanded.csproj`의 `HintPath`를 본인 게임 설치 경로(`Sephiria_Data/Managed`)로 바꿔야 합니다.
+
 ## 🛠️ 제작 툴 
 - Visual Studio 2022
 - dnSpy v6.1.8
