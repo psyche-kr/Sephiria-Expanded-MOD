@@ -103,6 +103,7 @@
     <Compile Include="Features\BossAggro.cs" />
     <Compile Include="Features\BossChallenge.cs" />
     <Compile Include="Features\BossDialogue.cs" />
+    <Compile Include="Features\BossLines.cs" />
     <Compile Include="Features\BossChallengeBadge.cs" />
     <Compile Include="Features\BossChallengeNet.cs" />
     <Compile Include="Features\BossChallenge_MoleChieftain.cs" />
@@ -163,6 +164,7 @@
     <Compile Include="Main.cs" />
     <Compile Include="ModSettings.cs" />
     <Compile Include="ModInfo.cs" />
+    <Compile Include="ModText.cs" />
     <Compile Include="Features\MonsterScaler.cs" />
     <Compile Include="Features\RightClickHold.cs" />
     <Compile Include="Features\DeveloperMode.cs" />

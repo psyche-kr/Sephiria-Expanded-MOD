@@ -13,7 +13,13 @@ namespace SephiriaExpanded
         private const string FrontName = "SephiriaExpanded_CursorFront";
         private const string LogTag = "[Sephiria Expanded][CursorOutline] ";
 
-        internal static readonly string[] ColorNames = { "검정", "진회색", "남색", "보라", "빨강", "청록", "하늘", "분홍", "노랑", "흰색" };
+        private static readonly string[] ColorNamesKorean = { "검정", "진회색", "남색", "보라", "빨강", "청록", "하늘", "분홍", "노랑", "흰색" };
+        private static readonly string[] ColorNamesEnglish = { "Black", "Dark Gray", "Navy", "Purple", "Red", "Teal", "Sky Blue", "Pink", "Yellow", "White" };
+
+        internal static string[] ColorNames
+        {
+            get { return ModText.T(ColorNamesKorean, ColorNamesEnglish); }
+        }
 
         private static readonly Color32[] Palette =
         {

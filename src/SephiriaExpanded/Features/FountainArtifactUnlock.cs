@@ -10,6 +10,7 @@ namespace SephiriaExpanded
     internal static class FountainArtifactUnlock
     {
         private const string BondKey = "SEPHIRIA_BOND";
+        private const string BondNameKey = "ItemRarity_Dual";
         private static readonly Color BondRarityColor = new Color(0f, 0.7647f, 0.4314f, 1f);
         private static readonly Dictionary<UI_DimensionPocketPanel, UI_JournalPanel_SearchOptionButton> BondButtons = new Dictionary<UI_DimensionPocketPanel, UI_JournalPanel_SearchOptionButton>();
 
@@ -28,15 +29,6 @@ namespace SephiriaExpanded
                 {
                     string category = item.categories[i];
                     if (string.IsNullOrEmpty(category)) continue;
-
-                    try
-                    {
-                        ItemCategoryEntity entity = ItemDatabase.FindItemCategory(category);
-                        if (entity != null && entity.categoryName.ToString() == "결속") return true;
-                    }
-                    catch
-                    {
-                    }
 
                     string value = category.ToLowerInvariant();
                     if (value.Contains("bond") || value.Contains("dual") || value.Contains("bind") || value.Contains("bound")) return true;
@@ -71,15 +63,6 @@ namespace SephiriaExpanded
         {
             if (button == null || string.IsNullOrEmpty(button.data)) return false;
             if (button.data == BondKey) return true;
-
-            try
-            {
-                ItemCategoryEntity category = ItemDatabase.FindItemCategory(button.data);
-                if (category != null && category.categoryName.ToString() == "결속") return true;
-            }
-            catch
-            {
-            }
 
             string value = button.data.ToLowerInvariant();
             return value.Contains("bond") || value.Contains("dual") || value.Contains("bind") || value.Contains("bound");
@@ -294,7 +277,7 @@ namespace SephiriaExpanded
 
                 UI_JournalPanel_SearchOptionButton button = UnityEngine.Object.Instantiate(__instance.searchOptionButtonPrefab, __instance.searchOptionButtonContainer);
                 button.name = "SephiriaExpanded_Button_BondRarity";
-                button.Initialize("결속", BondKey, __instance.SelectRarity, GetJournalTagColor(__instance), null);
+                button.Initialize(new LocalizedString(BondNameKey).ToString(), BondKey, __instance.SelectRarity, GetJournalTagColor(__instance), null);
                 SetBondRarityColor(button);
 
                 UI_JournalPanel_SearchOptionButton legend = __instance.searchOptionButtonContainer.GetComponentsInChildren<UI_JournalPanel_SearchOptionButton>(true).FirstOrDefault(x => x != null && x.data == EItemRarity.Legend.ToString());

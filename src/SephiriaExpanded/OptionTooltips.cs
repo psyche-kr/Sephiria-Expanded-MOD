@@ -44,7 +44,7 @@ namespace SephiriaExpanded
                 
             ["EnchantTableEnabled"] = ("인챈트 최소 3강 보장", "모든 인챈트 제단이 3회 인챈트 가능한 제단으로 고정됩니다."),
             ["FirstAnvilEnabled"] = ("첫 방 모루 보장", "1, 2층에서 첫번째 방에 모루를 반드시 보장하며, 강화 가능한 모든 무기의 리스트를 보여줍니다."),
-            ["MoreMapEnabled"] = ("맵 확장", "확장이 가능한 방이라면 4~6칸 사이로 랜덤하게 확장합니다. 만약 6칸이 확장되면 보상 방은 추가로 1개 제공됩니다.\n(멀티에서 사용하려면 게스트도 모드가 필요합니다.)"),
+            ["MoreMapEnabled"] = ("맵 확장", "확장이 가능한 방이라면 4~6칸 사이로 랜덤하게 확장합니다.\n(멀티에서 사용하려면 게스트도 모드가 필요합니다.)"),
             ["RandomEventMultiplier"] = ("랜덤 이벤트 등장 가중치", "헌혈, 비석, 수상한 상인, 아공간 상점 등 랜덤 이벤트가 발생할 확률의 배율을 조정합니다.\n(최대로 올려도 반드시 등장하지는 않습니다.)"),
             ["FountainCapacityEnabled"] = ("소원 분수 확장 사용", "소원 분수의 최대 용량을 늘립니다."),
             ["DifficultyMode"] = ("패턴 강화","모든 몬스터의 전체적인 배율이 향상되고 보스 몬스터의 패턴이 강화, 추가되어 기존보다 한층 어려워집니다.\n(모드가 없는 게스트도 이용 가능합니다.)\n(모드가 없는 게스트는 채팅창에 보스 대사가 나타나지 않습니다.)"),
@@ -69,13 +69,82 @@ namespace SephiriaExpanded
             ["PingIgnoreEnabled"] = ("핑 난사 방지", "다음 맵으로 이동하는 포탈에 상호작용하거나 이동하려 할 때 생기는 핑과 알림을 모든 플레이어가 스테이지마다 1회만 가능하도록 제한합니다."),
             ["MoreDummyHpEnabled"] = ("허수아비 체력 증가", "데미지를 측정하는 허수아비가 파괴되지 않고 체력이 증가합니다."),
             ["ResetAllSettings"] = ("모든 설정 초기화", "모드의 모든 설정을 기본값으로 되돌립니다."),
+            ["Language"] = ("언어", "모드 설정 화면의 표시 언어를 바꿉니다."),
 
+        };
+
+        private static readonly Dictionary<string, (string Title, string Description)> EnglishEntries =
+            new Dictionary<string, (string, string)>
+        {
+            ["ChatConvenienceEnabled"] = ("Chat Convenience", "Adds chat conveniences such as timestamps, chat scrolling, /clear (clear chat) and item grade display."),
+            ["ChatTimeMode"] = ("Time Format", "Chooses whether the time in front of chat messages is the real time or the play time."),
+            ["ShopFavoriteEnabled"] = ("Show Favorites in Shop", "Shows favorite item marks in shops too."),
+            ["EnchantMarkEnabled"] = ("Show Enchant Count", "Shows how many times an item has been enchanted."),
+            ["MorePresetEnabled"] = ("Preset Slot Expansion", "Increases preset slots to up to 100."),
+            ["AlwaysRunEnabled"] = ("Auto Run", "Always keeps running whenever running is possible."),
+            ["HiddenRoomFinderEnabled"] = ("Hidden Room Tracker", "Shows where hidden rooms are on the screen."),
+            ["LevelUpItemCount"] = ("Show Remaining Rewards", "Shows how many reward chances are left when choosing."),
+            ["MinimapOpenEnabled"] = ("Reveal Minimap", "Reveals the minimap."),
+            ["MinimapOpenTeleportEnabled"] = ("Minimap Travel", "Click the minimap to travel even to far places."),
+            ["FountainArtifactUnlockEnabled"] = ("Unlock All Items in Wishing Fountain", "Bond Artifacts, Tablets and artifacts sold by the suspicious merchant can be stored in the Wishing Fountain."),
+            ["AnytimeOpenInventoryEnabled"] = ("Open Inventory in Combat", "Lets you open the inventory and stats window even during combat."),
+            ["BossHpTextEnabled"] = ("Boss HP Text", "Shows the exact boss HP as text above the boss HP bar."),
+            ["BossAggroEnabled"] = ("Show Boss Aggro Target", "Outlines the player targeted by the boss in white."),
+            ["RightClickHoldEnabled"] = ("Auto Use Special Attack, Grimoire, Active Artifact", "Keeps using them while you hold the key."),
+            ["JournalWeaponOutlineMode"] = ("Root's Retreat Weapon Border", "Marks weapons cleared on hard mode 15/30/50/60 in the journal."),
+            ["WeaponShineEnabled"] = ("Root's Retreat Weapon Shine", "Weapons cleared on hard mode 60 sparkle while held. Also shown on the weapons of teammates who use the mod."),
+            ["CostumeFrameWatcherEnabled"] = ("Root's Retreat Costume Animation", "Decorates the banner of costumes cleared on hard mode 60."),
+
+            ["MoreInventoryEnabled"] = ("Inventory per Level", "Grants inventory slots every time you gain the set number of levels."),
+            ["PlayerLevelCapEnabled"] = ("Player Level Cap Expansion", "Raises the level cap from 30 to 60.\n(In multiplayer, guests also need the mod.)"),
+            ["InstantLeafExp"] = ("Instant Gold & EXP", "Removes the pickup objects for gold and EXP and collects them instantly."),
+            ["SellStartItem"] = ("Sell Starting Items", "Lets you sell the costume's starting items in shops."),
+
+            ["TradeMoneyShareEnabled"] = ("Share Lucky Medal", "Shares the Lucky Medal effect with the party."),
+            ["PotionShareEnabled"] = ("Share Potions", "When you pick up a potion, every party member gets one."),
+            ["FriendlyFireEnabled"] = ("Friendly Fire", "You can damage allies and be damaged by allies."),
+            ["FriendlyFireMultiplier"] = ("Friendly Fire Damage", "Sets the friendly fire damage multiplier between x0.1 and x1."),
+            ["KillLogEnabled"] = ("Kill Log", "When a player dies, shows who killed them in chat.\n(Guests without the mod don't see the kill log.)"),
+            ["FountainArtifactShare"] = ("Others Can Pick Up Fountain Artifacts", "When you drop an artifact taken from the Wishing Fountain, other players can pick it up."),
+            ["Multiplayer16"] = ("Max Players Expansion", "Raises the multiplayer player limit to 16."),
+            ["MysteryPotGuaranteed"] = ("Guaranteed Mystic Pot", "The Mystic Pot always appears where it can appear."),
+            ["InventorySell"] = ("Guaranteed Merchant Inventory", "The small merchant always sells an inventory."),
+            ["FirstArtifactLegendary"] = ("First Artifact Legendary", "Until you get your first item, artifact choices are always legendary or higher. Rerolls keep this, and it returns to normal once you get an item."),
+
+            ["EnchantTableEnabled"] = ("Enchant Altar Fixed to 3", "Every enchant altar allows 3 enchants."),
+            ["FirstAnvilEnabled"] = ("First Room Anvil", "Guarantees an anvil in the first room of floors 1 and 2 and shows every weapon that can be upgraded."),
+            ["MoreMapEnabled"] = ("Map Expansion", "Expandable floors get 4 to 6 extra rooms at random.\n(In multiplayer, guests also need the mod.)"),
+            ["RandomEventMultiplier"] = ("Random Event Weight", "Adjusts the chance multiplier of random events such as blood donation, gravestone, suspicious merchant and pocket dimension shop.\n(Even at max they are not guaranteed.)"),
+            ["FountainCapacityEnabled"] = ("Wishing Fountain Expansion", "Increases the maximum capacity of the Wishing Fountain."),
+            ["DifficultyMode"] = ("Pattern Enhancement", "Raises overall monster multipliers and enhances and adds boss patterns, making the game much harder.\n(Guests without the mod can also play.)\n(Guests without the mod don't see boss lines in chat.)"),
+            ["CursorOutlineEnabled"] = ("Cursor Visibility", "Adds a thick outline to the mouse cursor so it stays visible over combat effects. Pick the outline color in the 'Outline Color' sub-option."),
+            ["DifficultyBossBreak"] = ("Use Boss Break Gauge", "Bosses with pattern enhancement get a break gauge. Deplete it by damaging the boss to cancel its pattern and stun it for a moment.\n(Also applies to guests without the mod, but the gauge is only visible with the mod.)"),
+            ["DifficultyRecommended"] = ("Apply Recommended Multipliers", "Raises monster multipliers together with the pattern enhancement level. (Normal / Hard)\nNormal monster and mini boss HP x2 / x4, normal monster spawn x2 / x2, normal monster and mini boss attack speed x1.2 / x1.2\nBoss HP x2 / x4, boss damage +15% / +25%\nNot multiplied with values set in the Scaling tab; the higher one is used."),
+            ["DifficultyGlobalLevel"] = ("Global Difficulty", "The difficulty level applied to every floor and boss at once. With it on, you get +300% (Normal) / +500% (Hard) extra sapphires."),
+            ["MonsterScalerMiniBossSpawnEnabled"] = ("Apply Spawn Multiplier to Mini Bosses", "Chooses whether mini bosses are also multiplied by the spawn multiplier."),
+            ["MonsterScalerSpawnExpBalanceEnabled"] = ("Reduce EXP & Gold by Multiplier", "When on, extra monsters from the spawn multiplier don't give extra gold and EXP."),
+            ["BloodFestivalEnabled"] = ("Festival of Blood Mitigation", "When on, extra monster HP from the HP multiplier doesn't increase Festival of Blood healing."),
+
+            ["CutsceneSkipEnabled"] = ("Skip Qliphoth Cutscenes", "Skips the floor 5 Qliphoth and floor 6 Qliphoth phase 1 cutscenes.\n(In multiplayer, guests also need the mod.)"),
+            ["WhichIsThisModFromEnabled"] = ("Mod Item Tooltip", "Shows in the item tooltip which mod added the item."),
+            ["FPSMeterEnabled"] = ("Show FPS", "Shows the current frame rate in the top-left corner."),
+            ["UpdateHistory"] = ("Update History", "Check it to open the mod's update history (releases) page in your web browser."),
+            ["DamageMeterEnabled"] = ("Damage Meter", "Measures personal and party damage and DPS and shows them on screen.\n(Hold Alt to move the window.)"),
+            ["NameColorStart"] = ("Nickname Color", "Changes your nickname color. (Visible to guests without the mod.)\nWith gradient colors 1 and 2 set, the nickname goes from nickname color → gradient color 1 → gradient color 2.\n(Gradient colors set to None are skipped and only the set colors are used in order. Example: if gradient color 1 is None and only gradient color 2 is set, nickname color → gradient color 2)"),
+            ["MoreMultiplayerInfoEnabled"] = ("Show Teammate Currency", "In multiplayer, shows the dice, sapphires and gold each teammate has under their HP bar."),
+            ["WalletShareEnabled"] = ("Share Wallet with Team", "Combines every teammate's gold or dice into one shared wallet."),
+            ["GuestReturnToTownEnabled"] = ("Return to Town on Leaving", "When you leave a multiplayer session as a guest, go straight to your starting town instead of the title screen."),
+            ["PingSoundMode"] = ("Ping Sound", "Mutes ping sounds or stops them from repeating.\nDefault: vanilla\nOnce per N s: after the first ping sound, pings don't overlap for that time.\nMute: you don't hear ping sounds."),
+            ["PingIgnoreEnabled"] = ("Ping Spam Prevention", "Limits the pings and notices from interacting with or trying to use the next map portal to once per player per stage."),
+            ["MoreDummyHpEnabled"] = ("Scarecrow HP Boost", "Damage test scarecrows are not destroyed and get more HP."),
+            ["ResetAllSettings"] = ("Reset All Settings", "Resets every mod setting to its default."),
+            ["Language"] = ("Language", "Changes the display language of the mod settings."),
         };
 
         internal static bool TryGet(string name, out string title, out string description)
         {
             (string, string) entry;
-            if (!string.IsNullOrEmpty(name) && Entries.TryGetValue(name, out entry))
+            if (!string.IsNullOrEmpty(name) && (ModText.IsEnglish ? EnglishEntries : Entries).TryGetValue(name, out entry))
             {
                 title = entry.Item1;
                 description = entry.Item2;

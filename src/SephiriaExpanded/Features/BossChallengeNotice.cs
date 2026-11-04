@@ -10,7 +10,11 @@ namespace SephiriaExpanded
     internal static class BossChallengeNotice
     {
         private const string SampleId = "MORE_HP";
-        private const string Body = "플레이어의 회복 효과가 30% 감소합니다.";
+        private const string HeaderKey = "UI_HardBattleWarning";
+        private static string Body
+        {
+            get { return ModText.T("플레이어의 회복 효과가 30% 감소합니다.", "Player healing is reduced by 30%."); }
+        }
         private static readonly Regex ColorTag = new Regex("</?color[^>]*>", RegexOptions.IgnoreCase);
         private static readonly Regex TextRun = new Regex("(?<=^|>)[^<>]+(?=<|$)");
 
@@ -80,13 +84,19 @@ namespace SephiriaExpanded
 
             if (others.Count == 1) return others[0];
 
-            return others.Find(candidate => candidate.text != null && candidate.text.Contains("교란"));
+            return others.Find(candidate =>
+            {
+                foreach (UI_LocalizationStringText localization in candidate.GetComponentsInChildren<UI_LocalizationStringText>(true))
+                    if (localization.valueString != null && localization.valueString.key == HeaderKey) return true;
+
+                return candidate.text != null && candidate.text.Contains(new LocalizedString(HeaderKey).ToString());
+            });
         }
 
         private static string Header(string bossName, int level)
         {
             bool hard = level >= 2;
-            return "<color=" + (hard ? "red" : "yellow") + ">" + bossName + (hard ? " 대폭 강화" : " 강화") + "</color>";
+            return "<color=" + (hard ? "red" : "yellow") + ">" + bossName + (hard ? ModText.T(" 대폭 강화", " Greatly Enhanced") : ModText.T(" 강화", " Enhanced")) + "</color>";
         }
 
         private static IEnumerator DestroyWhenClosed(UI_HardBattleWarningHUD hud)

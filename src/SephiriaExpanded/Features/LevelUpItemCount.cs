@@ -39,7 +39,7 @@ namespace SephiriaExpanded
                 if (shown == remaining) return;
 
                 shown = remaining;
-                target.text = "남은 보상 " + remaining + "회";
+                target.text = ModText.T("남은 보상 " + remaining + "회", "Rewards left: " + remaining);
             }
             catch
             {

@@ -206,9 +206,9 @@ namespace SephiriaExpanded
 
         private static void Speak(UnitAI_NewBasic ai, string bossName, string bubbleColored, string chatColored, float time)
         {
-            ai.CreateSpeechBubble(bubbleColored, false, time);
+            ai.CreateSpeechBubble(BossLines.Localize(bubbleColored), false, time);
 
-            string coloredLine = bossName + " : \"" + chatColored + "\"";
+            string coloredLine = BossLines.Localize(bossName + " : \"" + chatColored + "\"");
 
             if (GameLogWriter.Instance != null) GameLogWriter.Instance.WriteLog(coloredLine, Color.white);
             if (NetworkServer.active)
@@ -232,8 +232,18 @@ namespace SephiriaExpanded
         {
             NetworkClient.ReplaceHandler<ColoredChatMessage>(message =>
             {
-                if (GameLogWriter.Instance != null) GameLogWriter.Instance.WriteLog(message.ColoredLine, Color.white);
+                if (GameLogWriter.Instance != null) GameLogWriter.Instance.WriteLog(BossLines.Localize(message.ColoredLine), Color.white);
             }, false);
+        }
+
+        [HarmonyPatch(typeof(UnitAI_NewBasic), nameof(UnitAI_NewBasic.CreateSpeechBubbleOnClient))]
+        private static class ClientLanguage
+        {
+            [HarmonyPrefix]
+            private static void Before(ref string key)
+            {
+                if (key != null && key.StartsWith("<color", StringComparison.Ordinal)) key = BossLines.Localize(key);
+            }
         }
 
         internal static bool TryFireThreshold(UnitAI_NewBasic ai, string thresholdKey)

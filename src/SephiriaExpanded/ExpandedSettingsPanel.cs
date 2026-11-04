@@ -17,7 +17,6 @@ namespace SephiriaExpanded
         private const string PauseButtonName = "SephiriaExpanded_PauseSettingsButton";
         private const string OpenSoundEvent = "event:/System/GameStart";
         private const string DevPauseButtonName = "SephiriaExpanded_PauseDevButton";
-        private const string DevPauseButtonSuffix = " 개발자 설정";
         private static readonly Color DevPauseButtonColor = new Color(1f, 0.55f, 0.1f, 1f);
         private static GameObject DevPauseButtonRoot;
 
@@ -28,7 +27,12 @@ namespace SephiriaExpanded
         private static UI_TabContent Content;
         private static Transform RowParent;
         private static ScrollRect Scroll;
-        private static readonly string[] TabTitles = { "로컬", "멀티", "배율", "패턴 강화", "기타" };
+        private static readonly string[] TabTitlesKorean = { "로컬", "멀티", "배율", "패턴 강화", "기타" };
+        private static readonly string[] TabTitlesEnglish = { "Local", "Multi", "Scaling", "Patterns", "Misc" };
+        private static string[] TabTitles
+        {
+            get { return ModText.T(TabTitlesKorean, TabTitlesEnglish); }
+        }
         private static readonly UI_TabContent[] TabContents = new UI_TabContent[TabTitles.Length];
         private static readonly Transform[] TabRowParents = new Transform[TabTitles.Length];
         private static readonly ScrollRect[] TabScrolls = new ScrollRect[TabTitles.Length];
@@ -163,6 +167,9 @@ namespace SephiriaExpanded
 
             if (Panel != null && Panel.IsOpened)
                 SyncTabHighlight();
+
+            if (LanguageRefreshPending)
+                ApplyLanguageRefresh();
 
             SyncMoreMapRow();
             SyncCutsceneSkipRow();
@@ -785,7 +792,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "ChatConvenienceEnabled",
-                "채팅 편의성 기능",
+                ModText.T("채팅 편의성 기능", "Chat Convenience"),
                 () => ModSettings.ChatConvenienceEnabled,
                 value =>
                 {
@@ -798,8 +805,8 @@ namespace SephiriaExpanded
                 IntegerTemplate,
                 RowParent,
                 "ChatTimeMode",
-                "   시간 표현 방식",
-                new[] { "실제 시간", "게임 진행 시간" },
+                ModText.T("   시간 표현 방식", "   Time Format"),
+                new[] { ModText.T("실제 시간", "Real Time"), ModText.T("게임 진행 시간", "Play Time") },
                 () => ModSettings.ChatTimeMode,
                 value => ModSettings.ChatTimeMode = value,
                 activeWhen: () => true
@@ -809,7 +816,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "ShopFavoriteEnabled",
-                "상점 즐겨찾기 표시",
+                ModText.T("상점 즐겨찾기 표시", "Show Favorites in Shop"),
                 () => ModSettings.ShopFavoriteEnabled,
                 value => ModSettings.ShopFavoriteEnabled = value
             );
@@ -818,7 +825,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "EnchantMarkEnabled",
-                "인챈트 횟수 표시",
+                ModText.T("인챈트 횟수 표시", "Show Enchant Count"),
                 () => ModSettings.EnchantMarkEnabled,
                 value => ModSettings.EnchantMarkEnabled = value
             );
@@ -827,7 +834,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "MorePresetEnabled",
-                "프리셋 슬롯 확장",
+                ModText.T("프리셋 슬롯 확장", "Preset Slot Expansion"),
                 () => ModSettings.MorePresetEnabled,
                 value => ModSettings.MorePresetEnabled = value
             );
@@ -837,7 +844,7 @@ namespace SephiriaExpanded
                 RebindTemplate,
                 RowParent,
                 "AlwaysRunEnabled",
-                "자동 달리기",
+                ModText.T("자동 달리기", "Auto Run"),
                 AlwaysRun.ToggleKey,
                 AlwaysRun.ValidateRebind,
                 () => AlwaysRun.HasBinding,
@@ -848,7 +855,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "DamageMeterEnabled",
-                "미터기 활성화",
+                ModText.T("미터기 활성화", "Damage Meter"),
                 () => ModSettings.DamageMeterEnabled,
                 value => ModSettings.DamageMeterEnabled = value,
                 RefreshConditionalRows
@@ -858,7 +865,7 @@ namespace SephiriaExpanded
                 IntegerTemplate,
                 RowParent,
                 "NameColorStart",
-                "닉네임 색상 변경",
+                ModText.T("닉네임 색상 변경", "Nickname Color"),
                 NameColor.StartLabels(),
                 () => ModSettings.NameColorStart,
                 value => ModSettings.NameColorStart = value,
@@ -870,14 +877,14 @@ namespace SephiriaExpanded
                 NameColor.Colors(null)
             );
 
-            NameColorExtraRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "NameColorA", "   그라데이션 색 1", NameColor.EndLabels(), () => ModSettings.NameColorA, value => ModSettings.NameColorA = value, NameColor.Refresh, NameColor.Colors(null)));
-            NameColorExtraRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "NameColorB", "   그라데이션 색 2", NameColor.EndLabels(), () => ModSettings.NameColorB, value => ModSettings.NameColorB = value, NameColor.Refresh, NameColor.Colors(null)));
+            NameColorExtraRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "NameColorA", ModText.T("   그라데이션 색 1", "   Gradient Color 1"), NameColor.EndLabels(), () => ModSettings.NameColorA, value => ModSettings.NameColorA = value, NameColor.Refresh, NameColor.Colors(null)));
+            NameColorExtraRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "NameColorB", ModText.T("   그라데이션 색 2", "   Gradient Color 2"), NameColor.EndLabels(), () => ModSettings.NameColorB, value => ModSettings.NameColorB = value, NameColor.Refresh, NameColor.Colors(null)));
 
             DamageMeterKeyRow = ExpandedOptionRows.AddRebind(
                 RebindTemplate,
                 RowParent,
                 "DamageMeterKey",
-                "   미터기 단축키",
+                ModText.T("   미터기 단축키", "   Meter Hotkey"),
                 DamageMeter.Key.Action,
                 DamageMeter.Key.Validate,
                 () => DamageMeter.Key.HasBinding,
@@ -888,7 +895,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "HiddenRoomFinderEnabled",
-                "숨겨진 방 추적",
+                ModText.T("숨겨진 방 추적", "Hidden Room Tracker"),
                 () => ModSettings.HiddenRoomFinderEnabled,
                 value => ModSettings.HiddenRoomFinderEnabled = value
             );
@@ -897,7 +904,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "AnytimeOpenInventoryEnabled",
-                "전투 중 인벤토리 열기",
+                ModText.T("전투 중 인벤토리 열기", "Open Inventory in Combat"),
                 () => ModSettings.AnytimeOpenInventoryEnabled,
                 value => ModSettings.AnytimeOpenInventoryEnabled = value
             );
@@ -906,8 +913,8 @@ namespace SephiriaExpanded
                 IntegerTemplate,
                 RowParent,
                 "BossHpTextEnabled",
-                "보스 체력 수치 표시",
-                new[] { "끄기", "전부 켜기", "남은 체력 / 최대 체력", "남은 체력만", "남은 체력 + %", "%만" },
+                ModText.T("보스 체력 수치 표시", "Boss HP Text"),
+                new[] { ModText.T("끄기", "Off"), ModText.T("전부 켜기", "All"), ModText.T("남은 체력 / 최대 체력", "Current / Max HP"), ModText.T("남은 체력만", "Current HP Only"), ModText.T("남은 체력 + %", "Current HP + %"), ModText.T("%만", "% Only") },
                 () => !ModSettings.BossHpTextEnabled ? 0 : ModSettings.BossHpTextFormat == BossHpFormatAll ? 1 : ModSettings.BossHpTextFormat + 2,
                 value =>
                 {
@@ -920,7 +927,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "BossAggroEnabled",
-                "보스 어그로 대상 표시",
+                ModText.T("보스 어그로 대상 표시", "Show Boss Aggro Target"),
                 () => ModSettings.BossAggroEnabled,
                 value => ModSettings.BossAggroEnabled = value
             );
@@ -929,7 +936,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "RightClickHoldEnabled",
-                "'특수공격', '마법서', '발동형' 자동 사용",
+                ModText.T("'특수공격', '마법서', '발동형' 자동 사용", "Auto Use Special Attack, Grimoire, Active Artifact"),
                 () => ModSettings.RightClickHoldEnabled,
                 value => ModSettings.RightClickHoldEnabled = value
             );
@@ -937,17 +944,17 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "CursorOutlineEnabled",
-                "마우스 커서 가시성 향상",
+                ModText.T("마우스 커서 가시성 향상", "Cursor Visibility"),
                 () => ModSettings.CursorOutlineEnabled,
                 value => ModSettings.CursorOutlineEnabled = value,
                 RefreshConditionalRows
             );
-            CursorOutlineColorRow = ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "CursorOutlineColor", "   테두리 색", CursorOutline.ColorNames, () => ModSettings.CursorOutlineColor, value => ModSettings.CursorOutlineColor = value, null, CursorOutline.ColorChoices(), () => true);
+            CursorOutlineColorRow = ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "CursorOutlineColor", ModText.T("   테두리 색", "   Outline Color"), CursorOutline.ColorNames, () => ModSettings.CursorOutlineColor, value => ModSettings.CursorOutlineColor = value, null, CursorOutline.ColorChoices(), () => true);
             ExpandedOptionRows.AddBool(
                 ToggleTemplate,
                 RowParent,
                 "MoreInventoryEnabled",
-                "레벨당 인벤토리 지급",
+                ModText.T("레벨당 인벤토리 지급", "Inventory per Level"),
                 () => ModSettings.MoreInventoryEnabled,
                 value =>
                 {
@@ -963,7 +970,7 @@ namespace SephiriaExpanded
                 SliderTemplate,
                 RowParent,
                 "MoreInventoryLevelInterval",
-                "   레벨",
+                ModText.T("   레벨", "   Levels"),
                 () => ModSettings.MoreInventoryLevelInterval,
                 value => ModSettings.MoreInventoryLevelInterval = value,
                 1,
@@ -976,7 +983,7 @@ namespace SephiriaExpanded
                 SliderTemplate,
                 RowParent,
                 "MoreInventorySlots",
-                "   인벤토리",
+                ModText.T("   인벤토리", "   Slots"),
                 () => ModSettings.MoreInventorySlots,
                 value => ModSettings.MoreInventorySlots = value,
                 1,
@@ -989,7 +996,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "PlayerLevelCapEnabled",
-                "플레이어 레벨 최대치 확장",
+                ModText.T("플레이어 레벨 최대치 확장", "Player Level Cap Expansion"),
                 () => ModSettings.PlayerLevelCapEnabled,
                 value =>
                 {
@@ -1005,7 +1012,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "InstantLeafExp",
-                "잎, 경험치 최적화",
+                ModText.T("잎, 경험치 최적화", "Instant Gold & EXP"),
                 () => ModSettings.InstantLeafExpEnabled,
                 value => ModSettings.InstantLeafExpEnabled = value
             );
@@ -1014,7 +1021,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "LevelUpItemCount",
-                "남은 보상 횟수 표시",
+                ModText.T("남은 보상 횟수 표시", "Show Remaining Rewards"),
                 () => ModSettings.LevelUpItemCountEnabled,
                 value => ModSettings.LevelUpItemCountEnabled = value
             );
@@ -1023,7 +1030,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "SellStartItem",
-                "시작 아이템 판매 가능",
+                ModText.T("시작 아이템 판매 가능", "Sell Starting Items"),
                 () => ModSettings.SellStartItemEnabled,
                 value => ModSettings.SellStartItemEnabled = value
             );
@@ -1032,8 +1039,8 @@ namespace SephiriaExpanded
                 IntegerTemplate,
                 RowParent,
                 "JournalWeaponOutlineMode",
-                "뿌리거둠 무기 테두리 효과",
-                new[] { "끄기", "A타입", "B타입", "B타입(S)" },
+                ModText.T("뿌리거둠 무기 테두리 효과", "Root's Retreat Weapon Border"),
+                new[] { ModText.T("끄기", "Off"), ModText.T("A타입", "Type A"), ModText.T("B타입", "Type B"), ModText.T("B타입(S)", "Type B (S)") },
                 () => ModSettings.JournalWeaponOutlineMode,
                 value => ModSettings.JournalWeaponOutlineMode = value
             );
@@ -1042,7 +1049,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "WeaponShineEnabled",
-                "뿌리거둠 무기 반짝임 효과",
+                ModText.T("뿌리거둠 무기 반짝임 효과", "Root's Retreat Weapon Shine"),
                 () => ModSettings.WeaponShineEnabled,
                 value => ModSettings.WeaponShineEnabled = value
             );
@@ -1051,7 +1058,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "CostumeFrameWatcherEnabled",
-                "뿌리거둠 코스튬 애니메이션 효과",
+                ModText.T("뿌리거둠 코스튬 애니메이션 효과", "Root's Retreat Costume Animation"),
                 () => ModSettings.CostumeFrameWatcherEnabled,
                 value =>
                 {
@@ -1064,7 +1071,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "TradeMoneyShareEnabled",
-                "행운의 메달 공유",
+                ModText.T("행운의 메달 공유", "Share Lucky Medal"),
                 () => ModSettings.TradeMoneyShareEnabled,
                 value => ModSettings.TradeMoneyShareEnabled = value
             );
@@ -1073,7 +1080,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "PotionShareEnabled",
-                "포션 획득 공유",
+                ModText.T("포션 획득 공유", "Share Potions"),
                 () => ModSettings.PotionShareEnabled,
                 value => ModSettings.PotionShareEnabled = value
             );
@@ -1082,7 +1089,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "FriendlyFireEnabled",
-                "팀킬 허용",
+                ModText.T("팀킬 허용", "Friendly Fire"),
                 () => ModSettings.FriendlyFireEnabled,
                 value => ModSettings.FriendlyFireEnabled = value,
                 RefreshConditionalRows
@@ -1092,7 +1099,7 @@ namespace SephiriaExpanded
                 SliderTemplate,
                 RowParent,
                 "FriendlyFireMultiplier",
-                "   팀킬 데미지 배율",
+                ModText.T("   팀킬 데미지 배율", "   Friendly Fire Damage"),
                 () => ModSettings.FriendlyFireMultiplierStep,
                 value => ModSettings.FriendlyFireMultiplierStep = value,
                 ModSettings.FriendlyFireStepMin,
@@ -1106,7 +1113,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "KillLogEnabled",
-                "   킬 로그 표시",
+                ModText.T("   킬 로그 표시", "   Kill Log"),
                 () => ModSettings.KillLogEnabled,
                 value => ModSettings.KillLogEnabled = value
             );
@@ -1115,7 +1122,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "MoreMultiplayerInfoEnabled",
-                "팀원 재화 표시",
+                ModText.T("팀원 재화 표시", "Show Teammate Currency"),
                 () => ModSettings.MoreMultiplayerInfoEnabled,
                 value => ModSettings.MoreMultiplayerInfoEnabled = value
             );
@@ -1124,7 +1131,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "WalletShareEnabled",
-                "팀원과 재화 공유",
+                ModText.T("팀원과 재화 공유", "Share Wallet with Team"),
                 () => ModSettings.WalletShareEnabled,
                 value => ModSettings.WalletShareEnabled = value,
                 RefreshConditionalRows
@@ -1134,7 +1141,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "WalletShareLeaf",
-                "   잎 공유",
+                ModText.T("   잎 공유", "   Share Gold"),
                 () => ModSettings.WalletShareLeaf,
                 value => ModSettings.WalletShareLeaf = value
             ));
@@ -1143,7 +1150,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "WalletShareDice",
-                "   주사위 공유",
+                ModText.T("   주사위 공유", "   Share Dice"),
                 () => ModSettings.WalletShareDice,
                 value => ModSettings.WalletShareDice = value
             ));
@@ -1152,7 +1159,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "GuestReturnToTownEnabled",
-                "멀티 퇴장 시 시작마을로 이동",
+                ModText.T("멀티 퇴장 시 시작마을로 이동", "Return to Town on Leaving"),
                 () => ModSettings.GuestReturnToTownEnabled,
                 value => ModSettings.GuestReturnToTownEnabled = value
             );
@@ -1161,7 +1168,7 @@ namespace SephiriaExpanded
                 IntegerTemplate,
                 RowParent,
                 "PingSoundMode",
-                "핑 소리 조절",
+                ModText.T("핑 소리 조절", "Ping Sound"),
                 PingSound.Labels,
                 () => ModSettings.PingSoundMode,
                 value => ModSettings.PingSoundMode = value
@@ -1171,7 +1178,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "PingIgnoreEnabled",
-                "핑 난사 방지",
+                ModText.T("핑 난사 방지", "Ping Spam Prevention"),
                 () => ModSettings.PingIgnoreEnabled,
                 value => ModSettings.PingIgnoreEnabled = value
             );
@@ -1180,7 +1187,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "FountainArtifactShare",
-                "소원 분수 아티팩트 타인이 줍기",
+                ModText.T("소원 분수 아티팩트 타인이 줍기", "Others Can Pick Up Fountain Artifacts"),
                 () => ModSettings.FountainArtifactShareEnabled,
                 value => ModSettings.FountainArtifactShareEnabled = value
             );
@@ -1189,7 +1196,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "Multiplayer16",
-                "최대 인원 확장",
+                ModText.T("최대 인원 확장", "Max Players Expansion"),
                 () => ModSettings.Multiplayer16Enabled,
                 value => ModSettings.Multiplayer16Enabled = value
             );
@@ -1198,7 +1205,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "MysteryPotGuaranteed",
-                "신비 항아리 확정 등장",
+                ModText.T("신비 항아리 확정 등장", "Guaranteed Mystic Pot"),
                 () => ModSettings.MysteryPotGuaranteedEnabled,
                 value => ModSettings.MysteryPotGuaranteedEnabled = value
             );
@@ -1207,7 +1214,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "InventorySell",
-                "상인 인벤토리 확정 판매",
+                ModText.T("상인 인벤토리 확정 판매", "Guaranteed Merchant Inventory"),
                 () => ModSettings.InventorySellEnabled,
                 value => ModSettings.InventorySellEnabled = value
             );
@@ -1216,7 +1223,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "FirstArtifactLegendary",
-                "첫 아티팩트 전설 보장",
+                ModText.T("첫 아티팩트 전설 보장", "First Artifact Legendary"),
                 () => ModSettings.FirstArtifactLegendaryEnabled,
                 value => ModSettings.FirstArtifactLegendaryEnabled = value
             );
@@ -1225,7 +1232,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "MinimapOpenEnabled",
-                "미니맵 밝히기",
+                ModText.T("미니맵 밝히기", "Reveal Minimap"),
                 () => ModSettings.MinimapOpenEnabled,
                 value =>
                 {
@@ -1240,7 +1247,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "MinimapOpenTeleportEnabled",
-                "   미니맵 이동 허용",
+                ModText.T("   미니맵 이동 허용", "   Minimap Travel"),
                 () => ModSettings.MinimapOpenTeleportEnabled,
                 value => ModSettings.MinimapOpenTeleportEnabled = value
             );
@@ -1249,7 +1256,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "EnchantTableEnabled",
-                "인챈트 제단 3회 고정",
+                ModText.T("인챈트 제단 3회 고정", "Enchant Altar Fixed to 3"),
                 () => ModSettings.EnchantTableEnabled,
                 value => ModSettings.EnchantTableEnabled = value
             );
@@ -1258,7 +1265,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "FirstAnvilEnabled",
-                "첫 방 모루 보장",
+                ModText.T("첫 방 모루 보장", "First Room Anvil"),
                 () => ModSettings.FirstAnvilEnabled,
                 value => ModSettings.FirstAnvilEnabled = value
             );
@@ -1267,7 +1274,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "MoreMapEnabled",
-                "맵 확장",
+                ModText.T("맵 확장", "Map Expansion"),
                 () => ModSettings.MoreMapEnabled,
                 value => ModSettings.MoreMapEnabled = value
             );
@@ -1276,7 +1283,7 @@ namespace SephiriaExpanded
                 SliderTemplate,
                 RowParent,
                 "RandomEventMultiplier",
-                "랜덤 이벤트 등장 가중치",
+                ModText.T("랜덤 이벤트 등장 가중치", "Random Event Weight"),
                 () => ModSettings.RandomEventMultiplier,
                 value => ModSettings.RandomEventMultiplier = value,
                 1,
@@ -1289,7 +1296,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "FountainCapacityEnabled",
-                "소원 분수 확장 사용",
+                ModText.T("소원 분수 확장 사용", "Wishing Fountain Expansion"),
                 () => ModSettings.FountainCapacityEnabled,
                 value =>
                 {
@@ -1305,7 +1312,7 @@ namespace SephiriaExpanded
                 SliderTemplate,
                 RowParent,
                 "FountainCapacityBonus",
-                "   소원 분수 추가 용량",
+                ModText.T("   소원 분수 추가 용량", "   Extra Capacity"),
                 () => ModSettings.FountainCapacityBonus,
                 value =>
                 {
@@ -1322,20 +1329,20 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "FountainArtifactUnlockEnabled",
-                "소원 분수에 모든 아이템 해금",
+                ModText.T("소원 분수에 모든 아이템 해금", "Unlock All Items in Wishing Fountain"),
                 () => ModSettings.FountainArtifactUnlockEnabled,
                 value => ModSettings.FountainArtifactUnlockEnabled = value
             );
 
-            string[] levelNames = { "끄기", "노말", "하드" };
+            string[] levelNames = { ModText.T("끄기", "Off"), ModText.T("노말", "Normal"), ModText.T("하드", "Hard") };
             Color?[] levelColors = { null, Color.yellow, Color.red };
             Color?[] globalLevelColors = { Color.yellow, Color.red };
             ExpandedOptionRows.AddChoice(
                 IntegerTemplate,
                 RowParent,
                 "DifficultyMode",
-                "패턴 강화",
-                new[] { "끄기", "세부 조절", "전체 조절" },
+                ModText.T("패턴 강화", "Pattern Enhancement"),
+                new[] { ModText.T("끄기", "Off"), ModText.T("세부 조절", "Detailed"), ModText.T("전체 조절", "Global") },
                 () => ModSettings.DifficultyMode,
                 value =>
                 {
@@ -1353,7 +1360,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "DifficultyBossBreak",
-                "   보스 무력화 게이지 사용",
+                ModText.T("   보스 무력화 게이지 사용", "   Use Boss Break Gauge"),
                 () => ModSettings.BossBreakEnabled,
                 value => ModSettings.BossBreakEnabled = value
             );
@@ -1362,7 +1369,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "DifficultyRecommended",
-                "   추천 배율 적용",
+                ModText.T("   추천 배율 적용", "   Apply Recommended Multipliers"),
                 () => ModSettings.DifficultyRecommendedEnabled,
                 value => ModSettings.DifficultyRecommendedEnabled = value
             );
@@ -1371,39 +1378,39 @@ namespace SephiriaExpanded
                 IntegerTemplate,
                 RowParent,
                 "DifficultyGlobalLevel",
-                "   전체 난이도",
-                new[] { "노말", "하드" },
+                ModText.T("   전체 난이도", "   Global Difficulty"),
+                new[] { ModText.T("노말", "Normal"), ModText.T("하드", "Hard") },
                 () => Mathf.Clamp(ModSettings.DifficultyGlobalLevel, 1, 2) - 1,
                 value => ModSettings.DifficultyGlobalLevel = value + 1,
                 null,
                 globalLevelColors
             );
 
-            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyFloor1", "   1층 스테이지", levelNames, () => ModSettings.DifficultyFloor1Level, value => ModSettings.DifficultyFloor1Level = value, null, levelColors));
-            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossMoleChieftain", "      모그디", levelNames, () => ModSettings.MoleChieftainBossChallengeLevel, value => ModSettings.MoleChieftainBossChallengeLevel = value, null, levelColors));
-            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossMoleBigBomb", "      오드너", levelNames, () => ModSettings.MoleBigBombBossChallengeLevel, value => ModSettings.MoleBigBombBossChallengeLevel = value, null, levelColors));
-            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossRootDemon", "      하즈", levelNames, () => ModSettings.RootDemonBossChallengeLevel, value => ModSettings.RootDemonBossChallengeLevel = value, null, levelColors));
-            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyFloor2", "   2층 스테이지", levelNames, () => ModSettings.DifficultyFloor2Level, value => ModSettings.DifficultyFloor2Level = value, null, levelColors));
-            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossOinkKing", "      라타카", levelNames, () => ModSettings.OinkKingBossChallengeLevel, value => ModSettings.OinkKingBossChallengeLevel = value, null, levelColors));
-            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossPantherRogueKing", "      레리드", levelNames, () => ModSettings.PantherRogueKingBossChallengeLevel, value => ModSettings.PantherRogueKingBossChallengeLevel = value, null, levelColors));
-            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyFloor3", "   3층 스테이지", levelNames, () => ModSettings.DifficultyFloor3Level, value => ModSettings.DifficultyFloor3Level = value, null, levelColors));
-            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossMadArmadillo", "      에르마", levelNames, () => ModSettings.MadArmadilloBossChallengeLevel, value => ModSettings.MadArmadilloBossChallengeLevel = value, null, levelColors));
-            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossLibraryGuard", "      팬택시스", levelNames, () => ModSettings.LibraryGuardBossChallengeLevel, value => ModSettings.LibraryGuardBossChallengeLevel = value, null, levelColors));
-            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyFloor4", "   4층 스테이지", levelNames, () => ModSettings.DifficultyFloor4Level, value => ModSettings.DifficultyFloor4Level = value, null, levelColors));
-            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossAskard", "      아스카드", levelNames, () => ModSettings.AskardBossChallengeLevel, value => ModSettings.AskardBossChallengeLevel = value, null, levelColors));
-            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyFloor5", "   5층 스테이지", levelNames, () => ModSettings.DifficultyFloor5Level, value => ModSettings.DifficultyFloor5Level = value, null, levelColors));
-            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossBirdDemon", "      코베스", levelNames, () => ModSettings.BirdDemonBossChallengeLevel, value => ModSettings.BirdDemonBossChallengeLevel = value, null, levelColors));
-            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossLizardDemon", "      크라즈", levelNames, () => ModSettings.LizardDemonBossChallengeLevel, value => ModSettings.LizardDemonBossChallengeLevel = value, null, levelColors));
-            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossQBoss", "      클리포트", levelNames, () => ModSettings.QBossChallengeLevel, value => ModSettings.QBossChallengeLevel = value, null, levelColors));
-            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyFloor6", "   6층 스테이지", levelNames, () => ModSettings.DifficultyFloor6Level, value => ModSettings.DifficultyFloor6Level = value, null, levelColors));
-            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossQQBoss", "      클리포트", levelNames, () => ModSettings.QQBossChallengeLevel, value => ModSettings.QQBossChallengeLevel = value, null, levelColors));
+            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyFloor1", ModText.T("   1층 스테이지", "   Floor 1 Stages"), levelNames, () => ModSettings.DifficultyFloor1Level, value => ModSettings.DifficultyFloor1Level = value, null, levelColors));
+            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossMoleChieftain", ModText.T("      모그디", "      Mogdi"), levelNames, () => ModSettings.MoleChieftainBossChallengeLevel, value => ModSettings.MoleChieftainBossChallengeLevel = value, null, levelColors));
+            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossMoleBigBomb", ModText.T("      오드너", "      Odner"), levelNames, () => ModSettings.MoleBigBombBossChallengeLevel, value => ModSettings.MoleBigBombBossChallengeLevel = value, null, levelColors));
+            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossRootDemon", ModText.T("      하즈", "      Haz"), levelNames, () => ModSettings.RootDemonBossChallengeLevel, value => ModSettings.RootDemonBossChallengeLevel = value, null, levelColors));
+            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyFloor2", ModText.T("   2층 스테이지", "   Floor 2 Stages"), levelNames, () => ModSettings.DifficultyFloor2Level, value => ModSettings.DifficultyFloor2Level = value, null, levelColors));
+            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossOinkKing", ModText.T("      라타카", "      Rataka"), levelNames, () => ModSettings.OinkKingBossChallengeLevel, value => ModSettings.OinkKingBossChallengeLevel = value, null, levelColors));
+            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossPantherRogueKing", ModText.T("      레리드", "      Lerid"), levelNames, () => ModSettings.PantherRogueKingBossChallengeLevel, value => ModSettings.PantherRogueKingBossChallengeLevel = value, null, levelColors));
+            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyFloor3", ModText.T("   3층 스테이지", "   Floor 3 Stages"), levelNames, () => ModSettings.DifficultyFloor3Level, value => ModSettings.DifficultyFloor3Level = value, null, levelColors));
+            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossMadArmadillo", ModText.T("      에르마", "      Erma"), levelNames, () => ModSettings.MadArmadilloBossChallengeLevel, value => ModSettings.MadArmadilloBossChallengeLevel = value, null, levelColors));
+            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossLibraryGuard", ModText.T("      팬택시스", "      Pentaxis"), levelNames, () => ModSettings.LibraryGuardBossChallengeLevel, value => ModSettings.LibraryGuardBossChallengeLevel = value, null, levelColors));
+            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyFloor4", ModText.T("   4층 스테이지", "   Floor 4 Stages"), levelNames, () => ModSettings.DifficultyFloor4Level, value => ModSettings.DifficultyFloor4Level = value, null, levelColors));
+            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossAskard", ModText.T("      아스카드", "      Askard"), levelNames, () => ModSettings.AskardBossChallengeLevel, value => ModSettings.AskardBossChallengeLevel = value, null, levelColors));
+            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyFloor5", ModText.T("   5층 스테이지", "   Floor 5 Stages"), levelNames, () => ModSettings.DifficultyFloor5Level, value => ModSettings.DifficultyFloor5Level = value, null, levelColors));
+            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossBirdDemon", ModText.T("      코베스", "      Kovess"), levelNames, () => ModSettings.BirdDemonBossChallengeLevel, value => ModSettings.BirdDemonBossChallengeLevel = value, null, levelColors));
+            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossLizardDemon", ModText.T("      크라즈", "      Kraz"), levelNames, () => ModSettings.LizardDemonBossChallengeLevel, value => ModSettings.LizardDemonBossChallengeLevel = value, null, levelColors));
+            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossQBoss", ModText.T("      클리포트", "      Qliphoth"), levelNames, () => ModSettings.QBossChallengeLevel, value => ModSettings.QBossChallengeLevel = value, null, levelColors));
+            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyFloor6", ModText.T("   6층 스테이지", "   Floor 6 Stages"), levelNames, () => ModSettings.DifficultyFloor6Level, value => ModSettings.DifficultyFloor6Level = value, null, levelColors));
+            DifficultyBossRows.Add(ExpandedOptionRows.AddChoice(IntegerTemplate, RowParent, "DifficultyBossQQBoss", ModText.T("      클리포트", "      Qliphoth"), levelNames, () => ModSettings.QQBossChallengeLevel, value => ModSettings.QQBossChallengeLevel = value, null, levelColors));
 
             ExpandedOptionRows.AddChoice(
                 IntegerTemplate,
                 RowParent,
                 "MonsterScalerSpawnMode",
-                "몬스터 생성 배율",
-                new[] { "전체 생성 배율", "층별 생성 배율", "종류별 생성 배율" },
+                ModText.T("몬스터 생성 배율", "Monster Spawn Multiplier"),
+                new[] { ModText.T("전체 생성 배율", "Global Spawn"), ModText.T("층별 생성 배율", "Spawn per Floor"), ModText.T("종류별 생성 배율", "Spawn per Type") },
                 () => ModSettings.MonsterScalerSpawnUsePerType ? 2 : (ModSettings.MonsterScalerSpawnUsePerFloor ? 1 : 0),
                 value =>
                 {
@@ -1422,7 +1429,7 @@ namespace SephiriaExpanded
                 SliderTemplate,
                 RowParent,
                 "MonsterScalerSpawnMultiplier",
-                "   전체",
+                ModText.T("   전체", "   All"),
                 () => ModSettings.MonsterScalerSpawnMultiplier,
                 value => ModSettings.MonsterScalerSpawnMultiplier = value,
                 1,
@@ -1441,7 +1448,7 @@ namespace SephiriaExpanded
                         SliderTemplate,
                         RowParent,
                         "MonsterScalerSpawnMultiplierByFloor" + (i + 1),
-                        "   " + (i + 1) + "층",
+                        ModText.T("   " + (i + 1) + "층", "   Floor " + (i + 1)),
                         () => ModSettings.MonsterScalerSpawnMultiplierByFloor[index],
                         value => ModSettings.MonsterScalerSpawnMultiplierByFloor[index] = value,
                         1,
@@ -1457,7 +1464,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "MonsterScalerMiniBossSpawnEnabled",
-                "미니보스 생성 배율 적용",
+                ModText.T("미니보스 생성 배율 적용", "Apply Spawn Multiplier to Mini Bosses"),
                 () => ModSettings.MonsterScalerMiniBossSpawnEnabled,
                 value => ModSettings.MonsterScalerMiniBossSpawnEnabled = value
             );
@@ -1466,20 +1473,20 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "MonsterScalerSpawnExpBalanceEnabled",
-                "경험치, 잎 획득량을 배율만큼 감소",
+                ModText.T("경험치, 잎 획득량을 배율만큼 감소", "Reduce EXP & Gold by Multiplier"),
                 () => ModSettings.MonsterScalerSpawnExpBalanceEnabled,
                 value => ModSettings.MonsterScalerSpawnExpBalanceEnabled = value
             );
 
-            string[] typeNames = { "일반 몬스터", "미니보스", "보스" };
+            string[] typeNames = { ModText.T("일반 몬스터", "Normal Monsters"), ModText.T("미니보스", "Mini Bosses"), ModText.T("보스", "Bosses") };
             for (int i = 0; i < 3; i++) { int index = i; SpawnTypeRows.Add(ExpandedOptionRows.AddSlider(SliderTemplate, RowParent, "MonsterScalerSpawnType" + i, "   " + typeNames[i], () => ModSettings.MonsterScalerSpawnMultiplierByType[index], value => ModSettings.MonsterScalerSpawnMultiplierByType[index] = value, index == 1 ? ModSettings.MiniBossSpawnByTypeMin : index == 2 ? ModSettings.BossSpawnByTypeFixed : 1, index == 2 ? ModSettings.BossSpawnByTypeFixed : 19, RateLabel, 10, dynamicMin: () => index == 0 ? SpawnTypeMinStep() : 0)); }
 
             ExpandedOptionRows.AddChoice(
                 IntegerTemplate,
                 RowParent,
                 "MonsterScalerHpMode",
-                "몬스터 체력 배율",
-                new[] { "전체 체력 배율", "층별 체력 배율", "종류별 체력 배율" },
+                ModText.T("몬스터 체력 배율", "Monster HP Multiplier"),
+                new[] { ModText.T("전체 체력 배율", "Global HP"), ModText.T("층별 체력 배율", "HP per Floor"), ModText.T("종류별 체력 배율", "HP per Type") },
                 () => ModSettings.MonsterScalerHpUsePerType ? 2 : (ModSettings.MonsterScalerHpUsePerFloor ? 1 : 0),
                 value =>
                 {
@@ -1498,7 +1505,7 @@ namespace SephiriaExpanded
                 SliderTemplate,
                 RowParent,
                 "MonsterScalerHpMultiplier",
-                "   전체",
+                ModText.T("   전체", "   All"),
                 () => ModSettings.MonsterScalerHpMultiplier,
                 value => ModSettings.MonsterScalerHpMultiplier = value,
                 1,
@@ -1517,7 +1524,7 @@ namespace SephiriaExpanded
                         SliderTemplate,
                         RowParent,
                         "MonsterScalerHpMultiplierByFloor" + (i + 1),
-                        "   " + (i + 1) + "층",
+                        ModText.T("   " + (i + 1) + "층", "   Floor " + (i + 1)),
                         () => ModSettings.MonsterScalerHpMultiplierByFloor[index],
                         value => ModSettings.MonsterScalerHpMultiplierByFloor[index] = value,
                         1,
@@ -1533,7 +1540,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "BloodFestivalEnabled",
-                "피의 축제 완화",
+                ModText.T("피의 축제 완화", "Festival of Blood Mitigation"),
                 () => ModSettings.BloodFestivalEnabled,
                 value => ModSettings.BloodFestivalEnabled = value
             );
@@ -1544,8 +1551,8 @@ namespace SephiriaExpanded
                 IntegerTemplate,
                 RowParent,
                 "MonsterScalerDamageMode",
-                "몬스터 데미지 배율",
-                new[] { "전체 데미지 배율", "층별 데미지 배율", "종류별 데미지 배율" },
+                ModText.T("몬스터 데미지 배율", "Monster Damage Multiplier"),
+                new[] { ModText.T("전체 데미지 배율", "Global Damage"), ModText.T("층별 데미지 배율", "Damage per Floor"), ModText.T("종류별 데미지 배율", "Damage per Type") },
                 () => ModSettings.MonsterScalerDamageUsePerType ? 2 : (ModSettings.MonsterScalerDamageUsePerFloor ? 1 : 0),
                 value =>
                 {
@@ -1561,34 +1568,34 @@ namespace SephiriaExpanded
             );
 
             DamageGlobalRow = ExpandedOptionRows.AddSlider(
-                SliderTemplate, RowParent, "MonsterScalerDamageMultiplier", "   전체",
+                SliderTemplate, RowParent, "MonsterScalerDamageMultiplier", ModText.T("   전체", "   All"),
                 () => ModSettings.MonsterScalerDamageMultiplier,
                 value => ModSettings.MonsterScalerDamageMultiplier = value, 1, 19, RateLabel, 10
             );
 
             DamageTypeRows.Add(ExpandedOptionRows.AddSlider(
-                SliderTemplate, RowParent, "MonsterScalerNormalDamageMultiplier", "   일반 몬스터",
+                SliderTemplate, RowParent, "MonsterScalerNormalDamageMultiplier", ModText.T("   일반 몬스터", "   Normal Monsters"),
                 () => ModSettings.MonsterScalerNormalDamageMultiplier,
                 value => ModSettings.MonsterScalerNormalDamageMultiplier = value, 1, 19, RateLabel, 10
             ));
             DamageTypeRows.Add(ExpandedOptionRows.AddSlider(
-                SliderTemplate, RowParent, "MonsterScalerMiniBossDamageMultiplier", "   미니보스",
+                SliderTemplate, RowParent, "MonsterScalerMiniBossDamageMultiplier", ModText.T("   미니보스", "   Mini Bosses"),
                 () => ModSettings.MonsterScalerMiniBossDamageMultiplier,
                 value => ModSettings.MonsterScalerMiniBossDamageMultiplier = value, 1, 19, RateLabel, 10
             ));
             DamageTypeRows.Add(ExpandedOptionRows.AddSlider(
-                SliderTemplate, RowParent, "MonsterScalerBossDamageMultiplier", "   보스",
+                SliderTemplate, RowParent, "MonsterScalerBossDamageMultiplier", ModText.T("   보스", "   Bosses"),
                 () => ModSettings.MonsterScalerBossDamageMultiplier,
                 value => ModSettings.MonsterScalerBossDamageMultiplier = value, 1, 19, RateLabel, 10, dynamicMin: BossDamageMinStep
             ));
-            for (int i = 0; i < 6; i++) { int index = i; DamageFloorRows.Add(ExpandedOptionRows.AddSlider(SliderTemplate, RowParent, "MonsterScalerDamageFloor" + (i + 1), "   " + (i + 1) + "층", () => ModSettings.MonsterScalerDamageMultiplierByFloor[index], value => ModSettings.MonsterScalerDamageMultiplierByFloor[index] = value, 1, 19, RateLabel, 10)); }
+            for (int i = 0; i < 6; i++) { int index = i; DamageFloorRows.Add(ExpandedOptionRows.AddSlider(SliderTemplate, RowParent, "MonsterScalerDamageFloor" + (i + 1), ModText.T("   " + (i + 1) + "층", "   Floor " + (i + 1)), () => ModSettings.MonsterScalerDamageMultiplierByFloor[index], value => ModSettings.MonsterScalerDamageMultiplierByFloor[index] = value, 1, 19, RateLabel, 10)); }
 
             ExpandedOptionRows.AddChoice(
                 IntegerTemplate,
                 RowParent,
                 "MonsterScalerSpeedMode",
-                "몬스터 속도 배율",
-                new[] { "전체 속도 배율", "층별 속도 배율", "종류별 속도 배율" },
+                ModText.T("몬스터 속도 배율", "Monster Speed Multiplier"),
+                new[] { ModText.T("전체 속도 배율", "Global Speed"), ModText.T("층별 속도 배율", "Speed per Floor"), ModText.T("종류별 속도 배율", "Speed per Type") },
                 () => ModSettings.MonsterScalerSpeedUsePerType ? 2 : (ModSettings.MonsterScalerSpeedUsePerFloor ? 1 : 0),
                 value =>
                 {
@@ -1604,19 +1611,19 @@ namespace SephiriaExpanded
             );
 
             SpeedGlobalRow = ExpandedOptionRows.AddSlider(
-                SliderTemplate, RowParent, "MonsterScalerSpeedMultiplier", "   전체",
+                SliderTemplate, RowParent, "MonsterScalerSpeedMultiplier", ModText.T("   전체", "   All"),
                 () => ModSettings.MonsterScalerSpeedMultiplier,
                 value => ModSettings.MonsterScalerSpeedMultiplier = value, 1, 19, RateLabel, 10
             );
 
-            for (int i = 0; i < 6; i++) { int index = i; SpeedFloorRows.Add(ExpandedOptionRows.AddSlider(SliderTemplate, RowParent, "MonsterScalerSpeedFloor" + (i + 1), "   " + (i + 1) + "층", () => ModSettings.MonsterScalerSpeedMultiplierByFloor[index], value => ModSettings.MonsterScalerSpeedMultiplierByFloor[index] = value, 1, 19, RateLabel, 10)); }
+            for (int i = 0; i < 6; i++) { int index = i; SpeedFloorRows.Add(ExpandedOptionRows.AddSlider(SliderTemplate, RowParent, "MonsterScalerSpeedFloor" + (i + 1), ModText.T("   " + (i + 1) + "층", "   Floor " + (i + 1)), () => ModSettings.MonsterScalerSpeedMultiplierByFloor[index], value => ModSettings.MonsterScalerSpeedMultiplierByFloor[index] = value, 1, 19, RateLabel, 10)); }
             for (int i = 0; i < 3; i++) { int index = i; SpeedTypeRows.Add(ExpandedOptionRows.AddSlider(SliderTemplate, RowParent, "MonsterScalerSpeedType" + i, "   " + typeNames[i], () => ModSettings.MonsterScalerSpeedMultiplierByType[index], value => ModSettings.MonsterScalerSpeedMultiplierByType[index] = value, 1, 19, RateLabel, 10, dynamicMin: () => index < 2 ? SpeedTypeMinStep() : 0)); }
 
             CutsceneSkipRow = ExpandedOptionRows.AddBool(
                 ToggleTemplate,
                 RowParent,
                 "CutsceneSkipEnabled",
-                "클리포트 연출 스킵",
+                ModText.T("클리포트 연출 스킵", "Skip Qliphoth Cutscenes"),
                 () => ModSettings.CutsceneSkipEnabled,
                 value => ModSettings.CutsceneSkipEnabled = value
             );
@@ -1625,7 +1632,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "WhichIsThisModFromEnabled",
-                "모드 아이템 툴팁 추가",
+                ModText.T("모드 아이템 툴팁 추가", "Mod Item Tooltip"),
                 () => ModSettings.WhichIsThisModFromEnabled,
                 value => ModSettings.WhichIsThisModFromEnabled = value
             );
@@ -1634,7 +1641,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "FPSMeterEnabled",
-                "FPS 표시",
+                ModText.T("FPS 표시", "Show FPS"),
                 () => ModSettings.FPSMeterEnabled,
                 value => ModSettings.FPSMeterEnabled = value
             );
@@ -1643,7 +1650,7 @@ namespace SephiriaExpanded
                 ToggleTemplate,
                 RowParent,
                 "MoreDummyHpEnabled",
-                "허수아비 체력 증가",
+                ModText.T("허수아비 체력 증가", "Scarecrow HP Boost"),
                 () => ModSettings.MoreDummyHpEnabled,
                 value =>
                 {
@@ -1652,11 +1659,24 @@ namespace SephiriaExpanded
                 }
             );
 
+            ExpandedOptionRows.AddChoice(
+                IntegerTemplate,
+                RowParent,
+                "Language",
+                ModText.T("언어", "Language"),
+                new[] { ModText.T("한글", "Korean"), ModText.T("영어", "English") },
+                () => ModSettings.Language,
+                value => ModSettings.Language = value,
+                RequestLanguageRefresh,
+                null,
+                () => true
+            );
+
             ExpandedOptionRows.AddBool(
                 ToggleTemplate,
                 RowParent,
                 "UpdateHistory",
-                "업데이트 내역",
+                ModText.T("업데이트 내역", "Update History"),
                 () => false,
                 value =>
                 {
@@ -1669,7 +1689,7 @@ namespace SephiriaExpanded
                 HorayButtonTemplate,
                 RowParent,
                 "ResetAllSettings",
-                "모든 설정 초기화",
+                ModText.T("모든 설정 초기화", "Reset All Settings"),
                 ResetAllSettings
             );
 
@@ -1686,7 +1706,7 @@ namespace SephiriaExpanded
                 HeaderTemplate,
                 RowParent,
                 "ModVersion",
-                "─ 모드 버전 : " + ModInfo.Version + " ─",
+                ModText.T("─ 모드 버전 : ", "─ Mod Version : ") + ModInfo.Version + " ─",
                 versionColor
             );
 
@@ -1717,7 +1737,7 @@ namespace SephiriaExpanded
 
         private const int GroupBlankCount = 3;
 
-        private static readonly string[][] TabHeaders =
+        private static readonly string[][] TabHeadersKorean =
         {
             new[] { "자신에게만 적용됩니다.", "게스트로도 사용 가능합니다. (미니맵 이동 제외)" },
             new[] { "호스트 전용 옵션입니다.", "모드가 없는 게스트도 적용됩니다." },
@@ -1725,6 +1745,20 @@ namespace SephiriaExpanded
             new[] { "호스트 전용 옵션입니다.", "모드가 없는 게스트도 적용됩니다." },
             new string[0]
         };
+
+        private static readonly string[][] TabHeadersEnglish =
+        {
+            new[] { "Applies only to you.", "Also works as a guest. (Except minimap travel)" },
+            new[] { "Host-only options.", "Also applies to guests without the mod." },
+            new[] { "Host-only options.", "Adjusts monster multipliers." },
+            new[] { "Host-only options.", "Also applies to guests without the mod." },
+            new string[0]
+        };
+
+        private static string[][] TabHeaders
+        {
+            get { return ModText.IsEnglish ? TabHeadersEnglish : TabHeadersKorean; }
+        }
 
         private static readonly string[][] LocalGroups =
         {
@@ -1945,7 +1979,7 @@ namespace SephiriaExpanded
         {
             string key = RowKey(name);
 
-            if (key == "ResetAllSettings" || key == "UpdateHistory" || name.StartsWith("SephiriaExpanded_FooterHeader_", StringComparison.Ordinal))
+            if (key == "Language" || key == "ResetAllSettings" || key == "UpdateHistory" || name.StartsWith("SephiriaExpanded_FooterHeader_", StringComparison.Ordinal))
                 return 4;
 
             if (key.StartsWith("Difficulty", StringComparison.Ordinal))
@@ -2102,7 +2136,7 @@ namespace SephiriaExpanded
             ExpandedOptionRows.SetVisible(UpdateInstalledRow, tag != null);
             if (tag == null) return;
 
-            string text = "모드 버전 : " + tag + " 설치 완료. 재시작 시 적용됩니다.";
+            string text = ModText.T("모드 버전 : " + tag + " 설치 완료. 재시작 시 적용됩니다.", "Mod Version : " + tag + " installed. Applied after restart.");
             foreach (TextMeshProUGUI label in UpdateInstalledRow.GetComponentsInChildren<TextMeshProUGUI>(true))
             {
                 if (label != null) label.text = text;
@@ -2272,7 +2306,7 @@ namespace SephiriaExpanded
                 button.onClick = new Button.ButtonClickedEvent();
                 button.onClick.AddListener(new UnityAction(Open));
 
-                SetPauseButtonText(clone, "SE " + ModInfo.Version + " 설정", EternalColor());
+                SetPauseButtonText(clone, PauseButtonTitle(), EternalColor());
 
                 PausePanel = pause;
                 PauseButtonRoot = clone;
@@ -2300,6 +2334,42 @@ namespace SephiriaExpanded
                 PauseButton = null;
                 VanillaOptionButton = null;
             }
+        }
+
+        private static string PauseButtonTitle()
+        {
+            return "SE " + ModInfo.Version + ModText.T(" 설정", " Settings");
+        }
+
+        private static string DevPauseButtonTitle()
+        {
+            return "SE " + ModInfo.Version + ModText.T(" 개발자 설정", " Developer Settings");
+        }
+
+        private static bool LanguageRefreshPending;
+
+        private static void RequestLanguageRefresh()
+        {
+            LanguageRefreshPending = true;
+        }
+
+        private static void ApplyLanguageRefresh()
+        {
+            LanguageRefreshPending = false;
+            ModSettings.Save();
+            DamageMeter.RefreshLanguage();
+
+            if (PauseButtonRoot != null) SetPauseButtonText(PauseButtonRoot, PauseButtonTitle(), EternalColor());
+            if (DevPauseButtonRoot != null) SetPauseButtonText(DevPauseButtonRoot, DevPauseButtonTitle(), DevPauseButtonColor);
+
+            bool reopen = Panel != null && Panel.IsOpened;
+            int tab = ActiveTab;
+            CleanupPanelOnly();
+            TryCreatePanel();
+            if (!reopen || !Ready) return;
+
+            OpenPanel(false);
+            ShowTab(tab);
         }
 
         private static Color EternalColor()
@@ -2332,7 +2402,7 @@ namespace SephiriaExpanded
 
             button.onClick = new Button.ButtonClickedEvent();
             button.onClick.AddListener(new UnityAction(OpenDevPanel));
-            SetPauseButtonText(clone, "SE " + ModInfo.Version + DevPauseButtonSuffix, DevPauseButtonColor);
+            SetPauseButtonText(clone, DevPauseButtonTitle(), DevPauseButtonColor);
 
             DevPauseButtonRoot = clone;
             clone.SetActive(DeveloperMode.Activated);
@@ -2403,6 +2473,11 @@ namespace SephiriaExpanded
 
         internal static void Open()
         {
+            OpenPanel(true);
+        }
+
+        private static void OpenPanel(bool playSound)
+        {
             if (!Ready)
             {
                 TryCreatePanel();
@@ -2429,7 +2504,7 @@ namespace SephiriaExpanded
                 return;
             }
 
-            FMODUnity.RuntimeManager.PlayOneShot(OpenSoundEvent);
+            if (playSound) FMODUnity.RuntimeManager.PlayOneShot(OpenSoundEvent);
             RefreshLayout();
 
             if (Scroll != null)

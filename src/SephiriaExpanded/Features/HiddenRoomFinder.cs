@@ -7,7 +7,10 @@ namespace SephiriaExpanded
 {
     internal sealed class HiddenRoomFinder : MonoBehaviour
     {
-        private const string Message = "이 층에는 숨겨진 방이 있습니다.";
+        private static string Message
+        {
+            get { return ModText.T("이 층에는 숨겨진 방이 있습니다.", "There is a hidden room on this floor."); }
+        }
         private const string ArrowName = "SephiriaExpanded_HiddenRoomArrow";
         private const string BoxName = "SephiriaExpanded_Drag_HiddenRoom";
         private const string ArrowRootName = "SephiriaExpanded_HiddenRoomArrows";

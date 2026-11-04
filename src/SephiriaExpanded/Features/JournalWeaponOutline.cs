@@ -265,7 +265,7 @@ namespace SephiriaExpanded
             if (string.IsNullOrEmpty(weaponName))
                 weaponName = weapon.name;
             if (string.IsNullOrEmpty(weaponName))
-                weaponName = "무기";
+                weaponName = ModText.T("무기", "Weapon");
 
             UI_HUDLogViewer[] viewers = FindObjectsByType<UI_HUDLogViewer>(FindObjectsInactive.Include, FindObjectsSortMode.None);
             for (int i = 0; i < viewers.Length; i++)
@@ -298,9 +298,9 @@ namespace SephiriaExpanded
 
         private Sprite LoadSprite(string fileName)
         {
-            string gameDirectory = Path.GetDirectoryName(Application.dataPath);
-            string path = Path.Combine(gameDirectory, "AddOns", "SephiriaExpanded", "Border", fileName);
-            if (!File.Exists(path))
+            string folder = ModInfo.Folder;
+            string path = folder == null ? null : Path.Combine(folder, "Border", fileName);
+            if (path == null || !File.Exists(path))
             {
                 Debug.LogWarning("[Sephiria Expanded] Journal Weapon 테두리 파일 없음: " + fileName);
                 return null;

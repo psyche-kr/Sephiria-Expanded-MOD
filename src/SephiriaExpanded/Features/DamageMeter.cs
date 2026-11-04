@@ -17,8 +17,8 @@ namespace SephiriaExpanded
         private const string Separator = " · ";
         private const float ErrorLogInterval = 10f;
 
-        private const string IceCategory = "얼음무구";
-        private const string IceColorItem = "눈보라망치";
+        private const string IceCategoryKey = "ItemCategory_Frost";
+        private const string IceColorItemKey = "Item_IceHammer_Name";
 
         private struct IconEntry
         {
@@ -55,25 +55,30 @@ namespace SephiriaExpanded
         private static readonly Dictionary<uint, float> RunBaselineTotal = new Dictionary<uint, float>();
         private static readonly Dictionary<string, SourceView> SourceCache = new Dictionary<string, SourceView>();
         private static readonly Dictionary<string, IconEntry> IconsByNameKey = new Dictionary<string, IconEntry>();
-        private static readonly Dictionary<string, IconEntry> IconsByName = new Dictionary<string, IconEntry>();
         private static readonly Dictionary<string, IconEntry> IconsBySpriteName = new Dictionary<string, IconEntry>();
         private static readonly Dictionary<string, bool> IceCategories = new Dictionary<string, bool>();
         private static readonly Dictionary<string, Sprite> AllSprites = new Dictionary<string, Sprite>();
         private static readonly Dictionary<Sprite, string> IconOwners = new Dictionary<Sprite, string>();
 
-        private static readonly Dictionary<string, string[]> ForcedIcons = new Dictionary<string, string[]>
+        private struct ForcedIcon
         {
-            { "플라즈마", new[] { "플라즈마 헬멧" } },
-            { "태양검", new[] { "InventoryAccessory_New_11", "태양검" } },
-            { "빙결", new[] { "InventoryAccessory_New_09", "빙하" } },
-            { "화상", new[] { "InventoryAccessory_New_12", "잉걸불" } },
-            { "먹구름", new[] { "InventoryAccessory_New_13" } },
-            { "감전", new[] { "InventoryAccessory_New_06", "마법공학" } },
-            { "중독", new[] { "자갑벌궁", "Crossbow_Poison" } },
-            { "상처악화", new[] { "심홍의 소용돌이", "Icon_GreatSword_Red" } }
+            internal string[] NameKeys;
+            internal string[] Candidates;
+        }
+
+        private static readonly ForcedIcon[] ForcedIcons =
+        {
+            new ForcedIcon { NameKeys = new[] { "Debuff_Plasma" }, Candidates = new[] { "Item_PlasmaActive_Name" } },
+            new ForcedIcon { NameKeys = new[] { "Status_FlameSword_Name", "ItemCategory_FlameSword" }, Candidates = new[] { "InventoryAccessory_New_11" } },
+            new ForcedIcon { NameKeys = new[] { "Debuff_Freeze" }, Candidates = new[] { "InventoryAccessory_New_09" } },
+            new ForcedIcon { NameKeys = new[] { "Debuff_Burn" }, Candidates = new[] { "InventoryAccessory_New_12" } },
+            new ForcedIcon { NameKeys = new[] { "Status_DarkCloud_Name", "ItemCategory_DarkCloud" }, Candidates = new[] { "InventoryAccessory_New_13" } },
+            new ForcedIcon { NameKeys = new[] { "Debuff_Electric", "Debuff_Shock" }, Candidates = new[] { "InventoryAccessory_New_06" } },
+            new ForcedIcon { NameKeys = new[] { "Debuff_Poison" }, Candidates = new[] { "Weapon_0121_Name", "Crossbow_Poison" } },
+            new ForcedIcon { NameKeys = new[] { "Debuff_Wound", "WeaponAddon_Wound_Name" }, Candidates = new[] { "WeaponGreatsword_Red_Tier3_Name", "Icon_GreatSword_Red" } }
         };
 
-        private const string DamageSuffix = "피해";
+        private static readonly string[] DamageSuffixes = { "피해", "Damage" };
 
         private static readonly Dictionary<EDamageElementalType, string> ElementKeywords = new Dictionary<EDamageElementalType, string>
         {
@@ -85,15 +90,15 @@ namespace SephiriaExpanded
             { EDamageElementalType.FireAndIce, "Elemental_FireAndIce" }
         };
 
-        private static readonly Dictionary<EDamageElementalType, string> ElementFallbacks = new Dictionary<EDamageElementalType, string>
+        private static readonly Dictionary<EDamageElementalType, string[]> ElementFallbacks = new Dictionary<EDamageElementalType, string[]>
         {
-            { EDamageElementalType.Fire, "화염" },
-            { EDamageElementalType.Ice, "냉기" },
-            { EDamageElementalType.Lightning, "번개" },
-            { EDamageElementalType.Chaos, "혼돈" },
-            { EDamageElementalType.IceAndLightning, "냉기·번개" },
-            { EDamageElementalType.FireAndLightning, "화염·번개" },
-            { EDamageElementalType.FireAndIce, "화염·냉기" }
+            { EDamageElementalType.Fire, new[] { "화염", "Fire" } },
+            { EDamageElementalType.Ice, new[] { "냉기", "Ice" } },
+            { EDamageElementalType.Lightning, new[] { "번개", "Lightning" } },
+            { EDamageElementalType.Chaos, new[] { "혼돈", "Chaos" } },
+            { EDamageElementalType.IceAndLightning, new[] { "냉기·번개", "Ice·Lightning" } },
+            { EDamageElementalType.FireAndLightning, new[] { "화염·번개", "Fire·Lightning" } },
+            { EDamageElementalType.FireAndIce, new[] { "화염·냉기", "Fire·Ice" } }
         };
 
         private static readonly Dictionary<EDamageElementalType, string> ElementNames = new Dictionary<EDamageElementalType, string>();
@@ -151,6 +156,13 @@ namespace SephiriaExpanded
             panel = new DamageMeterPanel { OnUpload = Upload, OnReset = ResetMeter };
         }
 
+        internal static void RefreshLanguage()
+        {
+            if (panel != null) panel.Destroy();
+            SourceCache.Clear();
+            ElementNames.Clear();
+        }
+
         internal static void Cleanup()
         {
             if (collector != null) collector.Release();
@@ -162,7 +174,6 @@ namespace SephiriaExpanded
             RunBaselineTotal.Clear();
             SourceCache.Clear();
             IconsByNameKey.Clear();
-            IconsByName.Clear();
             IconsBySpriteName.Clear();
             AllSprites.Clear();
             IceCategories.Clear();
@@ -346,14 +357,14 @@ namespace SephiriaExpanded
             string name = DamageMeterCollector.NameOf(local);
             if (run)
             {
-                uploadHeader = name + " 전체 피해량" + Separator + "합계 " + Amount(total);
-                return "합계 " + Amount(total);
+                uploadHeader = name + ModText.T(" 전체 피해량", " Total Damage") + Separator + ModText.T("합계 ", "Total ") + Amount(total);
+                return ModText.T("합계 ", "Total ") + Amount(total);
             }
 
             string current = Amount(total / seconds);
             string best = Amount(Model.BestOf(local.netId));
-            uploadHeader = name + " DPS" + Separator + "현재 " + current + Separator + "최고 " + best;
-            return Model.CombatStart <= 0f ? "대기 중" : "현재 " + current + " dps   최고 " + best + " dps";
+            uploadHeader = name + " DPS" + Separator + ModText.T("현재 ", "Current ") + current + Separator + ModText.T("최고 ", "Best ") + best;
+            return Model.CombatStart <= 0f ? ModText.T("대기 중", "Waiting") : ModText.T("현재 ", "Current ") + current + ModText.T(" dps   최고 ", " dps   Best ") + best + " dps";
         }
 
         private static string RenderParty(float now, bool run)
@@ -387,12 +398,12 @@ namespace SephiriaExpanded
 
             if (!run)
             {
-                uploadHeader = "파티 DPS";
+                uploadHeader = ModText.T("파티 DPS", "Party DPS");
                 return string.Empty;
             }
 
-            uploadHeader = "파티 전체 피해량" + Separator + "합계 " + Amount(sum);
-            return "합계 " + Amount(sum);
+            uploadHeader = ModText.T("파티 전체 피해량", "Party Total Damage") + Separator + ModText.T("합계 ", "Total ") + Amount(sum);
+            return ModText.T("합계 ", "Total ") + Amount(sum);
         }
 
         private static DamageMeterPanel.MeterRow RentRow(int index)
@@ -423,16 +434,17 @@ namespace SephiriaExpanded
             string name;
             if (ElementNames.TryGetValue(element, out name)) return name;
 
-            string fallback;
+            string[] fallback;
             if (!ElementFallbacks.TryGetValue(element, out fallback)) return null;
 
-            name = fallback;
+            name = ModText.T(fallback[0], fallback[1]);
             string keyword;
             KeywordEntity entity = ElementKeywords.TryGetValue(element, out keyword) ? KeywordDatabase.GetEntity(keyword) : null;
             if (entity != null)
             {
                 string converted = Regex.Replace(entity.Convert(false, false) ?? string.Empty, "<[^>]*>", string.Empty).Trim();
-                if (converted.EndsWith(DamageSuffix, StringComparison.Ordinal)) converted = converted.Substring(0, converted.Length - DamageSuffix.Length).Trim();
+                foreach (string suffix in DamageSuffixes)
+                    if (converted.EndsWith(suffix, StringComparison.OrdinalIgnoreCase)) converted = converted.Substring(0, converted.Length - suffix.Length).Trim();
                 if (!string.IsNullOrEmpty(converted)) name = converted;
             }
 
@@ -451,7 +463,7 @@ namespace SephiriaExpanded
             string key = entity == null || entity.aName == null ? null : entity.aName.key;
 
             IconEntry entry;
-            bool found = FindForced(Compact(name), out entry) || !string.IsNullOrEmpty(key) && IconsByNameKey.TryGetValue(key, out entry);
+            bool found = FindForced(Compact(name), key, out entry) || !string.IsNullOrEmpty(key) && IconsByNameKey.TryGetValue(key, out entry);
             Sprite icon;
             Color color;
             if (found)
@@ -475,15 +487,34 @@ namespace SephiriaExpanded
             return view;
         }
 
-        private static bool FindForced(string compactName, out IconEntry entry)
+        private static bool MatchesForced(ForcedIcon forced, string compactName, string nameKey)
+        {
+            foreach (string key in forced.NameKeys)
+            {
+                if (key == nameKey) return true;
+                if (!string.IsNullOrEmpty(compactName) && Compact(Regex.Replace(new LocalizedString(key).ToString() ?? string.Empty, "<[^>]*>", string.Empty)) == compactName) return true;
+            }
+
+            return false;
+        }
+
+        private static bool FindForced(string compactName, string nameKey, out IconEntry entry)
         {
             entry = default(IconEntry);
-            string[] candidates;
-            if (!ForcedIcons.TryGetValue(compactName, out candidates)) return false;
+            string[] candidates = null;
+            foreach (ForcedIcon forced in ForcedIcons)
+            {
+                if (!MatchesForced(forced, compactName, nameKey)) continue;
+
+                candidates = forced.Candidates;
+                break;
+            }
+
+            if (candidates == null) return false;
 
             foreach (string candidate in candidates)
             {
-                if (IconsBySpriteName.TryGetValue(SpriteKey(candidate), out entry) || IconsByName.TryGetValue(Compact(candidate), out entry)) return true;
+                if (IconsBySpriteName.TryGetValue(SpriteKey(candidate), out entry) || IconsByNameKey.TryGetValue(candidate, out entry)) return true;
 
                 Sprite sprite = SpriteByName(candidate);
                 if (sprite == null) continue;
@@ -521,7 +552,7 @@ namespace SephiriaExpanded
         private static Color IceColor(Color fallback)
         {
             IconEntry hammer;
-            return IconsByName.TryGetValue(Compact(IceColorItem), out hammer) ? IconColor.Of(hammer.Icon, fallback) : fallback;
+            return IconsByNameKey.TryGetValue(IceColorItemKey, out hammer) ? IconColor.Of(hammer.Icon, fallback) : fallback;
         }
 
         private static string Compact(string value)
@@ -538,11 +569,11 @@ namespace SephiriaExpanded
                 foreach (int id in ItemDatabase.GetAllItemID())
                 {
                     ItemEntity item = ItemDatabase.FindItemById(id);
-                    if (item != null && item.icon != null) Index(item.aName.key, item.Name, item.icon, IsIce(item));
+                    if (item != null && item.icon != null) Index(item.aName.key, item.icon, IsIce(item));
                 }
 
                 foreach (WeaponEntity weapon in WeaponDatabase.GetAll())
-                    if (weapon != null && weapon.icon != null) Index(weapon.aName.key, weapon.Name, weapon.icon, false);
+                    if (weapon != null && weapon.icon != null) Index(weapon.aName.key, weapon.icon, false);
             }
             catch (Exception exception)
             {
@@ -560,7 +591,7 @@ namespace SephiriaExpanded
                 if (!IceCategories.TryGetValue(category, out ice))
                 {
                     ItemCategoryEntity entity = ItemDatabase.FindItemCategory(category);
-                    ice = entity != null && Compact(entity.Name) == IceCategory;
+                    ice = entity != null && entity.categoryName != null && entity.categoryName.key == IceCategoryKey;
                     IceCategories[category] = ice;
                 }
 
@@ -570,13 +601,11 @@ namespace SephiriaExpanded
             return false;
         }
 
-        private static void Index(string key, string name, Sprite icon, bool ice)
+        private static void Index(string key, Sprite icon, bool ice)
         {
             IconEntry entry = new IconEntry { Icon = icon, Ice = ice };
             if (!string.IsNullOrEmpty(key) && !IconsByNameKey.ContainsKey(key)) IconsByNameKey[key] = entry;
 
-            string plain = Compact(KeywordDatabase.Convert(name, useColor: false, useSprite: false));
-            if (!string.IsNullOrEmpty(plain) && !IconsByName.ContainsKey(plain)) IconsByName[plain] = entry;
             string spriteKey = SpriteKey(icon.name);
             if (!IconsBySpriteName.ContainsKey(spriteKey)) IconsBySpriteName[spriteKey] = entry;
         }
@@ -592,9 +621,9 @@ namespace SephiriaExpanded
 
         private static string Fallback(string id)
         {
-            if (id == DamageMeterCollector.UnknownId) return "기타";
+            if (id == DamageMeterCollector.UnknownId) return ModText.T("기타", "Other");
 
-            return id.StartsWith("Companion_", StringComparison.Ordinal) ? "동료" : id;
+            return id.StartsWith("Companion_", StringComparison.Ordinal) ? ModText.T("동료", "Companion") : id;
         }
 
         private static Color CategoryColor(DamageIdEntity entity)

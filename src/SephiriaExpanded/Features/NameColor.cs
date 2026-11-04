@@ -7,13 +7,11 @@ namespace SephiriaExpanded
 {
     internal static class NameColor
     {
-        private const string OffLabel = "끄기";
-        private const string NoneLabel = "없음";
-
         private static readonly Regex Tags = new Regex("<[^>]*>");
         private static readonly System.Collections.Generic.List<Color> stops = new System.Collections.Generic.List<Color>();
 
-        private static readonly string[] PaletteNames = { "빨강", "주황", "노랑", "연두", "초록", "청록", "하늘", "파랑", "보라", "분홍", "흰색", "검정" };
+        private static readonly string[] PaletteNamesKorean = { "빨강", "주황", "노랑", "연두", "초록", "청록", "하늘", "파랑", "보라", "분홍", "흰색", "검정" };
+        private static readonly string[] PaletteNamesEnglish = { "Red", "Orange", "Yellow", "Lime", "Green", "Teal", "Sky Blue", "Blue", "Purple", "Pink", "White", "Black" };
 
         private static readonly Color32[] Palette =
         {
@@ -38,20 +36,21 @@ namespace SephiriaExpanded
 
         internal static string[] Labels(string first)
         {
-            string[] labels = new string[PaletteNames.Length + 1];
+            string[] names = ModText.T(PaletteNamesKorean, PaletteNamesEnglish);
+            string[] labels = new string[names.Length + 1];
             labels[0] = first;
-            PaletteNames.CopyTo(labels, 1);
+            names.CopyTo(labels, 1);
             return labels;
         }
 
         internal static string[] StartLabels()
         {
-            return Labels(OffLabel);
+            return Labels(ModText.T("끄기", "Off"));
         }
 
         internal static string[] EndLabels()
         {
-            return Labels(NoneLabel);
+            return Labels(ModText.T("없음", "None"));
         }
 
         internal static Color?[] Colors(Color? first)

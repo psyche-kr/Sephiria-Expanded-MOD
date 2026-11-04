@@ -132,9 +132,15 @@ namespace SephiriaExpanded
         private static readonly Color TrackColor = new Color(1f, 1f, 1f, 0.28f);
         private static readonly Color OriginColor = new Color(1f, 0.85f, 0.3f, 1f);
         private static readonly Vector2 TopLeft = new Vector2(0f, 1f);
-        private static readonly string[] PageLabels = { "DPS", "전체", "DPS", "전체" };
+        private static string[] PageLabels
+        {
+            get { return new[] { "DPS", ModText.T("전체", "Total"), "DPS", ModText.T("전체", "Total") }; }
+        }
         private static readonly int[] PageOfButton = { 0, 2, 1, 3 };
-        private static readonly string[] FooterLabels = { "업로드", "초기화", "최소화", "-", "+" };
+        private static string[] FooterLabels
+        {
+            get { return new[] { ModText.T("업로드", "Upload"), ModText.T("초기화", "Reset"), ModText.T("최소화", "Minimize"), "-", "+" }; }
+        }
         private static readonly float[] FooterWeights = { 2.2f, 2.2f, 2.2f, 1f, 1f };
 
         private readonly List<RowView> rows = new List<RowView>();
@@ -694,7 +700,7 @@ namespace SephiriaExpanded
 
             feedback.localScale = Vector3.one / scale;
             feedback.anchoredPosition = new Vector2(0f, -(rect.sizeDelta.y + 2f));
-            feedbackLabel.text = snapped ? "조정 없음" : "크기 " + Mathf.RoundToInt(scale * 100f) + "%";
+            feedbackLabel.text = snapped ? ModText.T("조정 없음", "No change") : ModText.T("크기 ", "Size ") + Mathf.RoundToInt(scale * 100f) + "%";
             feedbackLabel.color = snapped ? SnapBorderColor : Color.white;
             feedbackMin.text = Mathf.RoundToInt(MinScale * 100f) + "%";
             feedbackMax.text = Mathf.RoundToInt(MaxScale * 100f) + "%";
@@ -722,7 +728,7 @@ namespace SephiriaExpanded
         {
             float groupWidth = (Width - 2f * Padding - GroupGap) * 0.5f;
             float buttonWidth = (groupWidth - ButtonGap) * 0.5f;
-            string[] groups = { "개인", "파티" };
+            string[] groups = { ModText.T("개인", "Personal"), ModText.T("파티", "Party") };
             for (int group = 0; group < 2; group++)
             {
                 float groupX = Padding + group * (groupWidth + GroupGap);

@@ -47,7 +47,7 @@ namespace SephiriaExpanded
             }
         }
 
-        [HarmonyPatch(typeof(HorayNetworkManager), nameof(HorayNetworkManager.RestartGame))]
+        [HarmonyPatch(typeof(HorayNetworkManager), nameof(HorayNetworkManager.RestartGame), new[] { typeof(bool), typeof(int), typeof(string), typeof(ERestartPlacement) })]
         private static class RunRestart
         {
             [HarmonyPrefix]
@@ -196,7 +196,7 @@ namespace SephiriaExpanded
                 if (avatar == null || NetworkClient.localPlayer == null || avatar.netId != NetworkClient.localPlayer.netId)
                     return;
 
-                string message = level + "레벨 달성하여 인벤토리가 " + slots + "칸 확장되었습니다.";
+                string message = ModText.T(level + "레벨 달성하여 인벤토리가 " + slots + "칸 확장되었습니다.", "Reached level " + level + ": inventory expanded by " + slots + " slots.");
 
                 foreach (UI_HUDLogViewer viewer in UnityEngine.Object.FindObjectsByType<UI_HUDLogViewer>(
                     FindObjectsInactive.Include,

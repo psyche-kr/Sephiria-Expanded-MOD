@@ -28,6 +28,7 @@ namespace SephiriaExpanded
 
         internal static bool ChatConvenienceEnabled;
         internal static int ChatTimeMode;
+        internal static int Language;
         internal static bool ShopFavoriteEnabled;
         internal static bool EnchantMarkEnabled;
         internal static int JournalWeaponOutlineMode;
@@ -425,6 +426,7 @@ namespace SephiriaExpanded
 
             ChatConvenienceEnabled = GetBool(nameof(ChatConvenienceEnabled), false, "ChatPersistence");
             ChatTimeMode = GetInt(nameof(ChatTimeMode), 1, 0, 1, string.Empty);
+            Language = GetInt(nameof(Language), Application.systemLanguage == SystemLanguage.Korean ? ModText.Korean : ModText.English, ModText.Korean, ModText.English, string.Empty);
             ShopFavoriteEnabled = GetBool(nameof(ShopFavoriteEnabled), false);
             EnchantMarkEnabled = GetBool(nameof(EnchantMarkEnabled), false);
             JournalWeaponOutlineMode = GetInt(nameof(JournalWeaponOutlineMode), 0, 0, 3, "JournalWeaponOutline");
@@ -556,6 +558,7 @@ namespace SephiriaExpanded
 
             SetBool(nameof(ChatConvenienceEnabled), ChatConvenienceEnabled);
             SetInt(nameof(ChatTimeMode), ChatTimeMode);
+            SetInt(nameof(Language), Language);
             SetBool(nameof(ShopFavoriteEnabled), ShopFavoriteEnabled);
             SetBool(nameof(EnchantMarkEnabled), EnchantMarkEnabled);
             SetInt(nameof(JournalWeaponOutlineMode), JournalWeaponOutlineMode);

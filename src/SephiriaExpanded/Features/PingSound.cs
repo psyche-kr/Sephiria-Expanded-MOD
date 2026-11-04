@@ -5,7 +5,13 @@ namespace SephiriaExpanded
 {
     internal static class PingSound
     {
-        internal static readonly string[] Labels = { "없음", "3초에 한번", "5초에 한번", "소리 끄기" };
+        private static readonly string[] LabelsKorean = { "없음", "3초에 한번", "5초에 한번", "소리 끄기" };
+        private static readonly string[] LabelsEnglish = { "Default", "Once per 3s", "Once per 5s", "Mute" };
+
+        internal static string[] Labels
+        {
+            get { return ModText.T(LabelsKorean, LabelsEnglish); }
+        }
 
         private const int MuteMode = 3;
         private static readonly float[] Cooldowns = { 0f, 3f, 5f };

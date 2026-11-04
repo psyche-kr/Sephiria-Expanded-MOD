@@ -54,7 +54,7 @@ namespace SephiriaExpanded
 
                 UI_JournalPanel_SearchOptionButton button = UnityEngine.Object.Instantiate(__instance.searchOptionButtonPrefab, __instance.searchOptionButtonContainer);
                 button.name = "SephiriaExpanded_Button_TabletRarity";
-                button.Initialize("석판", Key, __instance.SelectTag, __instance.tagButtonDefaultColor, GetSprite());
+                button.Initialize(new LocalizedString("ItemType_StoneTablet").ToString(), Key, __instance.SelectTag, __instance.tagButtonDefaultColor, GetSprite());
                 button.transform.SetAsLastSibling();
 
                 Buttons[__instance] = button;

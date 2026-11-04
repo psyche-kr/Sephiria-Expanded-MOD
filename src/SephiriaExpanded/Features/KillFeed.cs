@@ -63,14 +63,14 @@ namespace SephiriaExpanded
             string victimName = Plain(victim);
             if (killer == null)
             {
-                GameLogWriter.Instance.WriteLog(victimName + "님이 사망했습니다.", Color.red);
+                GameLogWriter.Instance.WriteLog(ModText.T(victimName + "님이 사망했습니다.", victimName + " died."), Color.red);
                 return;
             }
 
             string killerName = Plain(killer);
             string line = killer is PlayerAvatar
-                ? killerName + "님이 " + victimName + "님을 처치했습니다. (팀킬)"
-                : victimName + "님이 " + killerName + "에게 처치당했습니다.";
+                ? ModText.T(killerName + "님이 " + victimName + "님을 처치했습니다. (팀킬)", killerName + " killed " + victimName + ". (Team kill)")
+                : ModText.T(victimName + "님이 " + killerName + "에게 처치당했습니다.", victimName + " was killed by " + killerName + ".");
             GameLogWriter.Instance.WriteLog(line, Color.red);
         }
 

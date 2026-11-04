@@ -114,7 +114,7 @@ namespace SephiriaExpanded
             {
                 ModSettings.AlwaysRunActive = !ModSettings.AlwaysRunActive;
                 ModSettings.Save();
-                Notify(ModSettings.AlwaysRunActive ? "자동 달리기 활성화" : "자동 달리기 비활성화");
+                Notify(ModSettings.AlwaysRunActive ? ModText.T("자동 달리기 활성화", "Auto run on") : ModText.T("자동 달리기 비활성화", "Auto run off"));
             }
 
             if (ModSettings.AlwaysRunActive && CanRun(player) && player.localDataStorage.isInputReceived)

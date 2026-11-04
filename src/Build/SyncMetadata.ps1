@@ -1,4 +1,4 @@
-param(
+﻿param(
     [Parameter(Mandatory = $true)]
     [string]$MetadataPath,
     [string]$ModInfoPath
@@ -25,8 +25,11 @@ if (-not $match.Success) {
 }
 
 $version = $match.Groups[1].Value
-$metadata = Get-Content -LiteralPath $MetadataPath -Raw | ConvertFrom-Json
+$metadata = Get-Content -LiteralPath $MetadataPath -Raw -Encoding UTF8 | ConvertFrom-Json
 $metadata.modVersion = $version
+if ($metadata.PSObject.Properties.Name -contains "mod") {
+    $metadata.mod.version = $version
+}
 $json = $metadata | ConvertTo-Json -Depth 16
 Set-Content -LiteralPath $MetadataPath -Value $json -Encoding UTF8
 Write-Output ("metadata.json modVersion을 {0}으로 변경했습니다." -f $version)

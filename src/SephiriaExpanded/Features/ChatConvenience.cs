@@ -588,25 +588,49 @@ namespace SephiriaExpanded
             catch { items.Clear(); }
         }
 
+        private static readonly string[] AcquireKeys = { "PlayerLog_AcquireItem", "PlayerLog_AcquireMultipleItem", "PlayerLog_AcquireItem_MultiPlay" };
+        private static readonly Dictionary<string, System.Text.RegularExpressions.Regex> AcquirePatterns = new Dictionary<string, System.Text.RegularExpressions.Regex>();
+
+        private static System.Text.RegularExpressions.Regex AcquirePattern(string key)
+        {
+            string template = new LocalizedString(key).ToString();
+            if (string.IsNullOrEmpty(template) || template.IndexOf("{ITEM}", StringComparison.Ordinal) < 0) return null;
+
+            System.Text.RegularExpressions.Regex pattern;
+            if (AcquirePatterns.TryGetValue(template, out pattern)) return pattern;
+
+            string plain = System.Text.RegularExpressions.Regex.Replace(template, "<[^>]*>", string.Empty).Trim();
+            string escaped = System.Text.RegularExpressions.Regex.Escape(plain)
+                .Replace(System.Text.RegularExpressions.Regex.Escape("(을)를"), "(?:을|를|\\(을\\)를)")
+                .Replace(System.Text.RegularExpressions.Regex.Escape("{ITEM}"), "(?<item>.+?)");
+            escaped = System.Text.RegularExpressions.Regex.Replace(escaped, @"\\\{\w+}", ".+?");
+            pattern = new System.Text.RegularExpressions.Regex("^" + escaped + "$");
+            AcquirePatterns[template] = pattern;
+            return pattern;
+        }
+
         private static string ColorItem(string log)
         {
-            int end = log.IndexOf(" 획득", StringComparison.Ordinal);
-            if (end < 0) return log;
-            BuildItemCache();
-            foreach (var item in items)
+            foreach (string key in AcquireKeys)
             {
-                int start = log.LastIndexOf(item.Name, end, StringComparison.Ordinal);
-                if (start < 0) continue;
-                int afterName = start + item.Name.Length;
-                string suffix = log.Substring(end).Trim();
-                bool own = afterName == end && suffix == "획득";
-                bool other = afterName + 1 == end &&
-                    (log[afterName] == '을' || log[afterName] == '를');
-                bool completedOther = suffix == "획득했습니다" || suffix == "획득했습니다.";
-                if (!own && (!other || !completedOther)) continue;
-                return log.Substring(0, start) + "<color=" + item.Color + ">" +
-                       item.Name + "</color>" + log.Substring(end);
+                System.Text.RegularExpressions.Regex pattern = AcquirePattern(key);
+                System.Text.RegularExpressions.Match match = pattern == null ? null : pattern.Match(log.Trim());
+                if (match == null || !match.Success) continue;
+
+                System.Text.RegularExpressions.Group group = match.Groups["item"];
+                int start = log.IndexOf(group.Value, StringComparison.Ordinal);
+                if (start < 0) return log;
+
+                BuildItemCache();
+                foreach (var item in items)
+                {
+                    if (item.Name != group.Value) continue;
+                    return log.Substring(0, start) + "<color=" + item.Color + ">" + item.Name + "</color>" + log.Substring(start + item.Name.Length);
+                }
+
+                return log;
             }
+
             return log;
         }
 

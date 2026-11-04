@@ -99,6 +99,11 @@ namespace SephiriaExpanded
                 Debug.LogWarning(LogTag + "모드 폴더를 찾지 못해 업데이트를 확인하지 않습니다.");
                 yield break;
             }
+            if (!ModInfo.IsAddOnInstall)
+            {
+                Debug.Log(LogTag + "AddOns 폴더 설치가 아니므로(창작마당 등) 자동 업데이트를 하지 않습니다: " + folder);
+                yield break;
+            }
 
             Debug.Log(LogTag + "업데이트 확인 시작 (현재 " + ModInfo.Version + ")");
             string recorded = PlayerPrefs.GetString(InstalledKey, "");
@@ -493,15 +498,7 @@ namespace SephiriaExpanded
 
         private static string ModFolder()
         {
-            try
-            {
-                string location = Assembly.GetExecutingAssembly().Location;
-                return string.IsNullOrEmpty(location) ? null : Path.GetDirectoryName(location);
-            }
-            catch
-            {
-                return null;
-            }
+            return ModInfo.Folder;
         }
 
         private static string CurrentFile()

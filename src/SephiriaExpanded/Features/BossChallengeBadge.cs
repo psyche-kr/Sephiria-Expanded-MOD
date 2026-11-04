@@ -9,10 +9,14 @@ namespace SephiriaExpanded
 {
     internal static class BossChallengeBadge
     {
-        private const string Tag = "[강화]";
-        private const string NormalPrefix = "<color=yellow>[강화]</color> ";
-        private const int TagLength = 4;
-        private const string HardPrefix = "<color=red>[강화]</color> ";
+        private const string TagKorean = "[강화]";
+        private const string TagEnglish = "[Enhanced]";
+        private static int TagLength = TagKorean.Length;
+
+        private static string Tag
+        {
+            get { return ModText.T(TagKorean, TagEnglish); }
+        }
         private static readonly Color OverheatColor = new Color32(0x99, 0x00, 0x85, 0xFF);
 
         private const float TintKeepAlive = 1f;
@@ -105,7 +109,11 @@ namespace SephiriaExpanded
                 if (level < 1 || __instance.nameText == null || !IsEnhanced(BossAi(__instance))) return;
 
                 TextMeshProUGUI text = __instance.nameText;
-                if (text.text.IndexOf(Tag) < 0) text.text = (level >= 2 ? HardPrefix : NormalPrefix) + text.text;
+                if (text.text.IndexOf(TagKorean) < 0 && text.text.IndexOf(TagEnglish) < 0)
+                {
+                    TagLength = Tag.Length;
+                    text.text = "<color=" + (level >= 2 ? "red" : "yellow") + ">" + Tag + "</color> " + text.text;
+                }
                 if (level < 2) return;
 
                 TMPGlitchEffect glitch = text.GetComponent<TMPGlitchEffect>() ?? text.gameObject.AddComponent<TMPGlitchEffect>();

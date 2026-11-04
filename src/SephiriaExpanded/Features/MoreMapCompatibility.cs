@@ -306,7 +306,7 @@ namespace SephiriaExpanded
             {
                 ModSettings.MoreMapEnabled = false;
                 ExpandedOptionRows.RefreshValues();
-                pendingNotice = "호스트가 맵 확장을 사용할 수 없어 자동으로 꺼졌습니다.";
+                pendingNotice = ModText.T("호스트가 맵 확장을 사용할 수 없어 자동으로 꺼졌습니다.", "Map expansion was turned off because the host can't use it.");
             }
         }
 
@@ -359,7 +359,7 @@ namespace SephiriaExpanded
             ModSettings.MoreMapEnabled = false;
             ModSettings.Save();
             ExpandedOptionRows.RefreshValues();
-            pendingNotice = "맵 확장이 호환되지 않는 게스트로 인해 자동으로 꺼졌습니다.";
+            pendingNotice = ModText.T("맵 확장이 호환되지 않는 게스트로 인해 자동으로 꺼졌습니다.", "Map expansion was turned off because of an incompatible guest.");
             SendStatusToCompatibleClients();
         }
 

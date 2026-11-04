@@ -12,7 +12,7 @@ namespace SephiriaExpanded
     {
         private const string TextName = "SephiriaExpanded_Text_WhichModeInfoText";
         private const string UnknownMod = "Unknown";
-        private const string TextFormat = "<color=#FFFFFF>모드 : </color><color=#FFFF00>{0}</color>";
+        private const string TextFormat = "<color=#FFFFFF>{1} : </color><color=#FFFF00>{0}</color>";
 
         private static readonly string[] IgnoredAssemblies = { "mscorlib", "System", "Unity", "Assembly-CSharp", "0Harmony", "Mono", "netstandard", "Mirror", "Newtonsoft" };
         private static readonly Dictionary<int, string> ModNames = new Dictionary<int, string>();
@@ -72,7 +72,7 @@ namespace SephiriaExpanded
                 Texts[tooltip] = text;
             }
 
-            if (visible) text.text = string.Format(TextFormat, modName);
+            if (visible) text.text = string.Format(TextFormat, modName, ModText.T("모드", "Mod"));
             if (text.gameObject.activeSelf != visible) text.gameObject.SetActive(visible);
             if (visible) LayoutRebuilder.ForceRebuildLayoutImmediate(text.transform.parent as RectTransform);
         }

@@ -11,39 +11,11 @@ namespace SephiriaExpanded
         private const int CombatPurpose = 2;
         private const int MinimumAdditionalCombatRooms = 4;
         private const int MaximumAdditionalCombatRooms = 6;
-        private const int EventPurpose = 4;
-        private static readonly ConditionalWeakTable<object, EventState> EventStates = new ConditionalWeakTable<object, EventState>();
         private static readonly ConditionalWeakTable<object, LoadState> LoadStates = new ConditionalWeakTable<object, LoadState>();
-
-        private sealed class EventState
-        {
-            internal int Count;
-        }
 
         private sealed class LoadState
         {
             internal bool Expanded;
-        }
-
-        private static void MarkEvent(object state, bool value)
-        {
-            if (state == null || !value)
-                return;
-
-            FieldInfo field = AccessTools.Field(state.GetType(), "<eventRoom>5__16");
-            if (field != null)
-                field.SetValue(state, true);
-
-            if (!MoreMapCompatibility.IsExpansionAllowed())
-                return;
-
-            EventState eventState = EventStates.GetOrCreateValue(state);
-            eventState.Count++;
-            if (eventState.Count < 2)
-                return;
-
-            if (field != null)
-                field.SetValue(state, true);
         }
 
         [HarmonyPatch]
@@ -131,9 +103,6 @@ namespace SephiriaExpanded
                         countField.SetValue(__instance, originalCount + loaded);
                         loadState.Expanded = true;
                     }
-
-                    if (loaded == MaximumAdditionalCombatRooms)
-                        AddEventPreset(__instance, generatorType);
                 }
                 catch
                 {
@@ -151,32 +120,6 @@ namespace SephiriaExpanded
                 return data != null && data.nodeProgress <= 0;
             }
 
-            private static void AddEventPreset(object generator, Type generatorType)
-            {
-                FieldInfo registeredField = AccessTools.Field(generatorType, "registeredRooms");
-                if (registeredField == null)
-                    return;
-
-                System.Collections.IDictionary registered = registeredField.GetValue(generator) as System.Collections.IDictionary;
-                if (registered == null || !registered.Contains(Enum.ToObject(registeredField.FieldType.GetGenericArguments()[0], EventPurpose)))
-                    return;
-
-                object eventList = registered[Enum.ToObject(registeredField.FieldType.GetGenericArguments()[0], EventPurpose)];
-                System.Collections.IList list = eventList as System.Collections.IList;
-                if (list == null || list.Count == 0)
-                    return;
-
-                object metadata = list[0];
-                MethodInfo cloneMethod = metadata.GetType().GetMethod("MemberwiseClone", BindingFlags.Instance | BindingFlags.NonPublic);
-                MethodInfo loadMethod = FindLoadMethod(generatorType, metadata.GetType());
-                if (cloneMethod == null || loadMethod == null)
-                    return;
-
-                object clone = cloneMethod.Invoke(metadata, null);
-                object purpose = Enum.ToObject(loadMethod.GetParameters()[1].ParameterType, EventPurpose);
-                loadMethod.Invoke(generator, new[] { clone, purpose });
-            }
-
             private static MethodInfo FindLoadMethod(Type generatorType, Type metadataType)
             {
                 MethodInfo[] methods = generatorType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
@@ -191,46 +134,6 @@ namespace SephiriaExpanded
                 }
 
                 return null;
-            }
-        }
-
-        [HarmonyPatch]
-        private static class EventGeneration
-        {
-            private static IEnumerable<MethodBase> TargetMethods()
-            {
-                string[] names =
-                {
-                    "EnhancedProceduralFloorGenerator+<GenerateInner>d__88",
-                    "LibraryFloorGenerator+<GenerateInner>d__93"
-                };
-
-                foreach (string name in names)
-                {
-                    Type type = AccessTools.TypeByName(name);
-                    MethodInfo method = type == null ? null : AccessTools.Method(type, "MoveNext");
-                    if (method != null)
-                        yield return method;
-                }
-            }
-
-            private static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
-            {
-                MethodInfo marker = AccessTools.Method(typeof(MoreMap), nameof(MarkEvent));
-                List<CodeInstruction> code = new List<CodeInstruction>(instructions);
-                for (int i = 1; i < code.Count; i++)
-                {
-                    if (code[i].opcode != System.Reflection.Emit.OpCodes.Stfld ||
-                        !(code[i].operand is FieldInfo field) ||
-                        field.Name != "<eventRoom>5__16" ||
-                        code[i - 1].opcode != System.Reflection.Emit.OpCodes.Ldc_I4_1)
-                        continue;
-
-                    code[i].opcode = System.Reflection.Emit.OpCodes.Call;
-                    code[i].operand = marker;
-                }
-
-                return code;
             }
         }
     }
