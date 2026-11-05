@@ -1,4 +1,6 @@
 # ⚙️ Sephiria Expanded MOD
+**한국어** | [English](README.en.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md)
+
 Sephiria의 플레이를 보조하는 HorayModAPI MOD입니다.
 
 [Steam 창작마당](https://steamcommunity.com/sharedfiles/filedetails/?id=3832216646) | [업데이트 내역](https://github.com/psyche-kr/Sephiria-Expanded-MOD/releases) | [업데이트 로드맵](https://github.com/psyche-kr/Sephiria-Expanded-MOD/blob/main/ROADMAP.md) | [건의 및 오류 제보](https://github.com/psyche-kr/Sephiria-Expanded-MOD/issues)
@@ -6,7 +8,7 @@ Sephiria의 플레이를 보조하는 HorayModAPI MOD입니다.
 ## 💡 설치 방법
 1. [Steam 창작마당](https://steamcommunity.com/sharedfiles/filedetails/?id=3832216646)에서 Sephiria Expanded를 구독합니다.
 2. 게임을 실행하면 모드가 적용됩니다. 새 버전은 Steam이 자동으로 받아 옵니다.
-3. 모든 기능은 ESC 메뉴의 `Sephiria Expanded` 버튼에서 켜고 끌 수 있습니다. 설정 화면은 한국어, 영어, 중국어(간체)를 지원합니다.
+3. 모든 기능은 ESC 메뉴의 `Sephiria Expanded` 버튼에서 켜고 끌 수 있습니다. 설정 화면은 한국어, 영어, 중국어(간체), 일본어를 지원합니다.
 
 ## 🧩 소스 코드
 모드 소스는 [`src/`](src) 에 있습니다. 게임이 제공하는 내부 API(`HorayModBase`)를 상속한 진입점에서 [Harmony](https://github.com/pardeike/Harmony)로 게임 메서드를 패치하는 방식으로 동작합니다.
@@ -104,7 +106,7 @@ Sephiria의 플레이를 보조하는 HorayModAPI MOD입니다.
 - 피의 축제 완화: 옵션을 키게 되면 체력 배율에 따라 증가한 몬스터의 체력이 피의 축제 효과로 인해 회복량도 같이 늘어나지 않도록 보정합니다.
 
 **기타**
-- 언어: 모드 설정 화면의 표시 언어를 바꿉니다. (한글 / 영어 / 중국어) 처음에는 PC 언어에 맞춰 정해집니다.
+- 언어: 모드 설정 화면의 표시 언어를 바꿉니다. (한글 / 영어 / 중국어 / 일본어) 처음에는 PC 언어에 맞춰 정해집니다. 모드가 띄우는 알림과 보스 대사도 이 언어를 따릅니다.
 - 업데이트 내역: 체크하면 모드의 업데이트 내역(릴리스) 페이지를 웹 브라우저로 엽니다.
 - 모든 설정 초기화: 모드의 모든 설정을 기본값으로 되돌립니다.
 
