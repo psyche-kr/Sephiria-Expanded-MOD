@@ -48,7 +48,8 @@ The mod source is in [`src/`](src). An entry point that inherits the game's inte
 - Auto Use Special Attack, Grimoire, Active Artifact: keeps using them while you hold the key.
 - Mod Item Tooltip: shows in the item tooltip which mod added the item.
 - Show FPS: shows the current frame rate in the top-left corner.
-- Damage Meter: measures personal and party damage and DPS and shows them on screen. (Personal DPS, personal total damage, party DPS, party total damage) Hold Alt to move the window.
+- Damage Meter: measures personal and party damage and DPS and shows them on screen. (Personal DPS, personal total damage, party DPS, party total damage)
+ - Window controls: Alt + left-click and drag to move the window, and Alt + right-click and drag a corner to resize it. Switch pages with the top buttons, and shrink it to a small bar showing only your current DPS with the `&` button at the top right (the `/` button on the small bar switches to total damage). The bottom buttons post the ranking to chat (Upload), reset the measurement, and add or remove rows (- / +).
  - Meter Hotkey: sets the key that shows or hides the meter window.
 - Kill Log: a kill log option is added under Friendly Fire. When a player dies, the name of whoever killed them (monster or player) is shown in chat. Guests without the mod don't see the log.
 - Nickname Color: changes your nickname to one of 12 colors. (Visible to guests without the mod.) With gradient colors 1 and 2 set, the nickname goes nickname color → gradient color 1 → gradient color 2.
